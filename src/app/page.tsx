@@ -3,9 +3,9 @@
 import { useState } from "react";
 
 const mockGames = [
-  { id: "1", name: "joao", category: "teste", status: "concluido?" },
-  { id: "2", name: "barcelona", category: "maior da", status: "espanha!" },
-  { id: "3", name: "flamengo", category: "maior do", status: "brasil!" },
+  { id: "1", name: "Elden Ring", category: "Action RPG", status: "Em Investigação" },
+  { id: "2", name: "Cyberpunk 2077", category: "Sci-Fi RPG", status: "Concluído" },
+  { id: "3", name: "Hollow Knight", category: "Metroidvania", status: "Em Análise" },
 ];
 
 export default function Home() {
