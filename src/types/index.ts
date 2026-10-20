@@ -1,3 +1,9 @@
+// ==========================================
+// RESERVADO PARA O DEV 4
+// Definições de tipos e interfaces globais
+// do sistema Lore Master.
+// ==========================================
+
 export type SeverityLevel = "critico" | "alto" | "medio" | "baixo";
 
 export interface GameIssue {
