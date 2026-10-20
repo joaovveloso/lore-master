@@ -12,13 +12,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="pt-BR" className="dark">
       <body className={`${inter.className} bg-slate-950 text-slate-100 min-h-screen`}>
-        <GameProvider>{children}</GameProvider>
+        <GameProvider>
+          {children}
+        </GameProvider>
       </body>
     </html>
   );
