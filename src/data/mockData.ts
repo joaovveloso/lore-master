@@ -1,112 +1,21 @@
 import { GameData } from "@/types";
 
+// ==========================================
+// RESERVADO PARA O DEV 3
+// Preencha esta array com a base de dados
+// oficial dos 3 jogos (jogos a serem decididos).
+// ==========================================
+
 export const mockGames: GameData[] = [
   {
-    id: "elden-ring",
-    name: "Elden Ring",
-    genre: "Action RPG",
-    totalReviews: 84200,
-    totalIssues: 1240,
-    complaintRate: 14.2,
-    sentiment: "Muito Positivas",
-    steamRating: 92,
-    issues: [
-      {
-        id: "er-1",
-        title: "Quedas de FPS no Boss Radahn",
-        category: "Performance",
-        severity: "critico",
-        complaintCount: 420,
-        percentage: 33.8,
-        status: "Em Investigação",
-      },
-      {
-        id: "er-2",
-        title: "Stuttering ao carregar novas áreas",
-        category: "Otimização",
-        severity: "alto",
-        complaintCount: 310,
-        percentage: 25.0,
-        status: "Pendente",
-      },
-      {
-        id: "er-3",
-        title: "Desconexão no modo Cooperativo",
-        category: "Multiplayer",
-        severity: "medio",
-        complaintCount: 180,
-        percentage: 14.5,
-        status: "Pendente",
-      },
-    ],
-  },
-  {
-    id: "cyberpunk-2077",
-    name: "Cyberpunk 2077",
-    genre: "Sci-Fi RPG",
-    totalReviews: 128500,
-    totalIssues: 3410,
-    complaintRate: 26.8,
-    sentiment: "Ligeiramente Positivas",
-    steamRating: 78,
-    issues: [
-      {
-        id: "cp-1",
-        title: "NPs e Veículos sumindo aleatoriamente",
-        category: "Visual/Render",
-        severity: "critico",
-        complaintCount: 950,
-        percentage: 27.8,
-        status: "Em Investigação",
-      },
-      {
-        id: "cp-2",
-        title: "Crash ao entrar em Night City Norte",
-        category: "Estabilidade",
-        severity: "critico",
-        complaintCount: 820,
-        percentage: 24.0,
-        status: "Pendente",
-      },
-      {
-        id: "cp-3",
-        title: "Física dos carros instável em alta velocidade",
-        category: "Gameplay",
-        severity: "baixo",
-        complaintCount: 430,
-        percentage: 12.6,
-        status: "Resolvido",
-      },
-    ],
-  },
-  {
-    id: "hollow-knight",
-    name: "Hollow Knight",
-    genre: "Metroidvania",
-    totalReviews: 65400,
-    totalIssues: 320,
-    complaintRate: 4.8,
-    sentiment: "Extremamente Positivas",
-    steamRating: 97,
-    issues: [
-      {
-        id: "hk-1",
-        title: "Delay de Input em Monitores 144Hz",
-        category: "Controles",
-        severity: "medio",
-        complaintCount: 95,
-        percentage: 29.6,
-        status: "Em Investigação",
-      },
-      {
-        id: "hk-2",
-        title: "Conquistas do Steam não sincronizam",
-        category: "Integração",
-        severity: "baixo",
-        complaintCount: 60,
-        percentage: 18.7,
-        status: "Resolvido",
-      },
-    ],
+    id: "placeholder",
+    name: "Aguardando Mocks",
+    genre: "N/A",
+    totalReviews: 0,
+    totalIssues: 0,
+    complaintRate: 0,
+    sentiment: "N/A",
+    steamRating: 0,
+    issues: [],
   },
 ];
