@@ -1,13 +1,32 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-import { GameData, GameContextType } from "@/types";
+import { GameContextType, GameData } from "@/types";
 import { mockGames } from "@/data/mockData";
+
+// ==========================================
+// RESERVADO PARA O DEV 7
+// Desenvolva o GameProvider, controle do jogo
+// selecionado e gerenciamento de créditos aqui.
+// ==========================================
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
-  const [selectedGame, setSelectedGame] = useState<GameData>(mockGames[0]);
+  const [games] = useState<GameData[]>(mockGames);
+  const [selectedGame, setSelectedGame] = useState<GameData>(
+    mockGames[0] || {
+      id: "placeholder",
+      name: "Aguardando Mocks",
+      genre: "N/A",
+      totalReviews: 0,
+      totalIssues: 0,
+      complaintRate: 0,
+      sentiment: "N/A",
+      steamRating: 0,
+      issues: [],
+    }
+  );
   const [credits, setCredits] = useState<number>(250);
 
   const addCredits = (amount: number) => {
@@ -27,7 +46,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       value={{
         selectedGame,
         setSelectedGame,
-        games: mockGames,
+        games,
         credits,
         addCredits,
         deductCredits,
