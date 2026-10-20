@@ -1,57 +1,66 @@
 "use client";
 
-import { useState } from "react";
-
-const mockGames = [
-  { id: "1", name: "Elden Ring", category: "Action RPG", status: "Em Investigação" },
-  { id: "2", name: "Cyberpunk 2077", category: "Sci-Fi RPG", status: "Concluído" },
-  { id: "3", name: "Hollow Knight", category: "Metroidvania", status: "Em Análise" },
-];
+import { Header } from "@/components/Header";
+import { Sidebar } from "@/components/Sidebar";
+import { useGame } from "@/context/GameContext";
 
 export default function Home() {
-  const [selectedGame, setSelectedGame] = useState(mockGames[0]);
+  const { selectedGame } = useGame();
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-slate-950 text-white font-sans">
-      <div className="w-full max-w-xl border border-rose-900/50 bg-slate-900 p-6 rounded-2xl shadow-xl">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
-          <span className="text-xs font-mono font-bold text-rose-500 uppercase tracking-widest">
-            🧪 Teste de Componente Dinâmico (`develop`)
-          </span>
-          <span className="text-xs bg-rose-950 text-rose-300 px-2.5 py-1 rounded-full border border-rose-800">
-            Lore Master PoC
-          </span>
-        </div>
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+      <Header />
+      <div className="flex flex-1">
+        <Sidebar />
+        <main className="flex-1 p-8">
+          <div className="max-w-5xl mx-auto space-y-6">
+            
+            {/* Status Banner */}
+            <div className="border border-emerald-500/30 bg-emerald-500/10 p-4 rounded-xl flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="w-3 h-3 rounded-full bg-emerald-400 animate-ping" />
+                <p className="text-sm font-medium text-emerald-300">
+                  Semana 1 Homologada: Shell e Gerenciamento de Estado Ativos!
+                </p>
+              </div>
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-950/60 px-2.5 py-1 rounded-md border border-emerald-800">
+                `develop` OK
+              </span>
+            </div>
 
-        <h2 className="text-xl font-bold mb-2">Selecione um jogo para inspecionar:</h2>
-        
-        {/* Botoes de Selecao */}
-        <div className="flex gap-2 mb-6">
-          {mockGames.map((game) => (
-            <button
-              key={game.id}
-              onClick={() => setSelectedGame(game)}
-              className={`px-4 py-2 text-sm rounded-lg font-medium transition-all ${
-                selectedGame.id === game.id
-                  ? "bg-rose-600 text-white shadow-lg shadow-rose-900/40"
-                  : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white"
-              }`}
-            >
-              {game.name}
-            </button>
-          ))}
-        </div>
+            {/* Target Overview Card */}
+            <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+              <span className="text-xs font-mono text-rose-400 uppercase tracking-wider font-semibold">
+                Alvo Selecionado via GameContext
+              </span>
+              <h2 className="text-3xl font-bold text-white mt-1">{selectedGame.name}</h2>
+              <p className="text-sm text-slate-400 mt-1">Gênero: {selectedGame.genre}</p>
 
-        {/* Card do Jogo Selecionado */}
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-          <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Detalhes do Alvo</p>
-          <h3 className="text-2xl font-bold text-rose-400 mt-1">{selectedGame.name}</h3>
-          <div className="mt-3 flex justify-between text-sm text-slate-300">
-            <span>Gênero: <strong>{selectedGame.category}</strong></span>
-            <span>Status: <strong className="text-emerald-400">{selectedGame.status}</strong></span>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <p className="text-xs text-slate-500 font-medium">Total de Reviews</p>
+                  <p className="text-xl font-bold text-white mt-1">
+                    {selectedGame.totalReviews.toLocaleString("pt-BR")}
+                  </p>
+                </div>
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <p className="text-xs text-slate-500 font-medium">Taxa de Queixas</p>
+                  <p className="text-xl font-bold text-rose-400 mt-1">
+                    {selectedGame.complaintRate}%
+                  </p>
+                </div>
+                <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <p className="text-xs text-slate-500 font-medium">Status na Steam</p>
+                  <p className="text-xl font-bold text-emerald-400 mt-1">
+                    {selectedGame.sentiment}
+                  </p>
+                </div>
+              </div>
+            </div>
+
           </div>
-        </div>
+        </main>
       </div>
-    </main>
+    </div>
   );
 }
