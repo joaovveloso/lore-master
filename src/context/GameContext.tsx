@@ -1,43 +1,37 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-import { GameContextType, GameData } from "@/types";
+import { GameContextType, GameData, CreditAccount } from "@/types";
 import { mockGames } from "@/data/mockData";
 
 // ==========================================
-// RESERVADO PARA O DEV 7
-// Desenvolva o GameProvider, controle do jogo
-// selecionado e gerenciamento de créditos aqui.
+// DESENVOLVIDO PELO DEV 7
 // ==========================================
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
-  const [games] = useState<GameData[]>(mockGames);
-  const [selectedGame, setSelectedGame] = useState<GameData>(
-    mockGames[0] || {
-      id: "placeholder",
-      name: "Aguardando Mocks",
-      genre: "N/A",
-      totalReviews: 0,
-      totalIssues: 0,
-      complaintRate: 0,
-      sentiment: "N/A",
-      steamRating: 0,
-      issues: [],
-    }
-  );
-  const [credits, setCredits] = useState<number>(250);
+  const [selectedGame, setSelectedGame] = useState<GameData | null>(mockGames[0] || null);
+  
+  const [credits, setCredits] = useState<CreditAccount>({
+    userId: "user_demo_01",
+    availableCredits: 250,
+    planType: "free",
+    lastRefillDate: new Date().toISOString(),
+  });
 
-  const addCredits = (amount: number) => {
-    setCredits((prev) => prev + amount);
-  };
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const deductCredits = (amount: number): boolean => {
-    if (credits >= amount) {
-      setCredits((prev) => prev - amount);
+  const deductCredits = async (amount: number): Promise<boolean> => {
+    if (credits.availableCredits >= amount) {
+      setCredits((prev) => ({
+        ...prev,
+        availableCredits: prev.availableCredits - amount,
+      }));
       return true;
     }
+    setError("Créditos insuficientes para realizar esta operação.");
     return false;
   };
 
@@ -46,10 +40,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       value={{
         selectedGame,
         setSelectedGame,
-        games,
         credits,
-        addCredits,
         deductCredits,
+        isLoading,
+        error,
       }}
     >
       {children}
