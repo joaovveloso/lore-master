@@ -1,60 +1,113 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
-import { GameContextType, GameData, CreditAccount } from "@/types";
-import { mockGames } from "@/data/mockData";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 
-// ==========================================
-// DESENVOLVIDO PELO DEV 7
-// ==========================================
+import type {
+  CreditAccount,
+  GameContextType,
+  GameData,
+} from "@/types";
 
-const GameContext = createContext<GameContextType | undefined>(undefined);
+const INITIAL_CREDITS: CreditAccount = {
+  userId: "local-user",
+  availableCredits: 20,
+  planType: "free",
+  lastRefillDate: new Date().toISOString(),
+};
 
-export function GameProvider({ children }: { children: React.ReactNode }) {
-  const [selectedGame, setSelectedGame] = useState<GameData | null>(mockGames[0] || null);
-  
-  const [credits, setCredits] = useState<CreditAccount>({
-    userId: "user_demo_01",
-    availableCredits: 250,
-    planType: "free",
-    lastRefillDate: new Date().toISOString(),
-  });
+const GameContext = createContext<GameContextType | undefined>(
+  undefined
+);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+interface GameProviderProps {
+  children: ReactNode;
+}
+
+export function GameProvider({ children }: GameProviderProps) {
+  const [selectedGame, setSelectedGame] = useState<GameData | null>(
+    null
+  );
+
+  const [credits, setCredits] =
+    useState<CreditAccount>(INITIAL_CREDITS);
+
+  const creditsRef = useRef<CreditAccount>(INITIAL_CREDITS);
+
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const deductCredits = async (amount: number): Promise<boolean> => {
-    if (credits.availableCredits >= amount) {
-      setCredits((prev) => ({
-        ...prev,
-        availableCredits: prev.availableCredits - amount,
-      }));
-      return true;
-    }
-    setError("Créditos insuficientes para realizar esta operação.");
-    return false;
+  const deductCredits = useCallback(
+    async (amount: number): Promise<boolean> => {
+      if (amount !== 5 && amount !== 10) {
+        setError(
+          "Operação inválida. Use 10 créditos para diagnóstico ou 5 para benchmarking."
+        );
+        return false;
+      }
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const currentAccount = creditsRef.current;
+
+        if (currentAccount.availableCredits < amount) {
+          setError("Créditos insuficientes para esta operação.");
+          return false;
+        }
+
+        const updatedAccount: CreditAccount = {
+          ...currentAccount,
+          availableCredits:
+            currentAccount.availableCredits - amount,
+        };
+
+        // Atualiza a referência antes de permitir outra operação.
+        creditsRef.current = updatedAccount;
+        setCredits(updatedAccount);
+
+        return true;
+      } catch {
+        setError("Não foi possível atualizar os créditos.");
+        return false;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
+
+  const value: GameContextType = {
+    selectedGame,
+    setSelectedGame,
+    credits,
+    deductCredits,
+    isLoading,
+    error,
   };
 
   return (
-    <GameContext.Provider
-      value={{
-        selectedGame,
-        setSelectedGame,
-        credits,
-        deductCredits,
-        isLoading,
-        error,
-      }}
-    >
+    <GameContext.Provider value={value}>
       {children}
     </GameContext.Provider>
   );
 }
 
-export function useGame() {
+export function useGame(): GameContextType {
   const context = useContext(GameContext);
+
   if (!context) {
-    throw new Error("useGame deve ser usado dentro de um GameProvider");
+    throw new Error(
+      "useGame deve ser utilizado dentro de um GameProvider."
+    );
   }
+
   return context;
 }
