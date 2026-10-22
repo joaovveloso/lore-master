@@ -1,9 +1,3 @@
-/**
- * @file src/types/index.ts
- * @description Contratos de interfaces e tipos globais para a plataforma web Lore Master.
- * @author Arquiteto de Dados / Dev 4
- */
-
 export type SeverityLevel = 'low' | 'medium' | 'high' | 'critical';
 
 export interface GameData {
@@ -57,11 +51,6 @@ export interface CreditAccount {
 export interface GameContextType {
   selectedGame: GameData | null;
   setSelectedGame: (game: GameData | null) => void;
-  credits: CreditAccount;
-  deductCredits: (amount: number) => Promise<boolean>;
-  isLoading: boolean;
-  error: string | null;
-}
   credits: CreditAccount;
   deductCredits: (amount: number) => Promise<boolean>;
   isLoading: boolean;
