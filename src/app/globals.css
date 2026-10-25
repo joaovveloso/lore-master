@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* =========================================
    LORE MASTER — DESIGN SYSTEM
@@ -99,7 +101,6 @@
 
 @layer utilities {
   /* Fundo das páginas */
-
   .lm-page {
     min-height: 100vh;
     background: var(--lm-background);
@@ -107,14 +108,12 @@
   }
 
   /* Cabeçalho */
-
   .lm-header {
     background: var(--lm-surface);
     border-bottom: 1px solid var(--lm-border);
   }
 
   /* Menu lateral */
-
   .lm-sidebar {
     background: var(--lm-brand);
     color: #FFFFFF;
@@ -132,7 +131,6 @@
   }
 
   /* Cards e painéis */
-
   .lm-card {
     background: var(--lm-surface);
     border: 1px solid var(--lm-border);
@@ -141,7 +139,6 @@
   }
 
   /* Botão principal */
-
   .lm-button-primary {
     background: var(--lm-brand);
     color: #FFFFFF;
@@ -156,7 +153,6 @@
   }
 
   /* Base dos badges */
-
   .badge-severity {
     display: inline-flex;
     align-items: center;
@@ -171,7 +167,6 @@
   }
 
   /* Crítico */
-
   .badge-severity-critical {
     color: var(--lm-critical-text);
     background: var(--lm-critical-bg);
@@ -179,7 +174,6 @@
   }
 
   /* Alto */
-
   .badge-severity-high {
     color: var(--lm-high-text);
     background: var(--lm-high-bg);
@@ -187,7 +181,6 @@
   }
 
   /* Médio */
-
   .badge-severity-medium {
     color: var(--lm-medium-text);
     background: var(--lm-medium-bg);
@@ -195,7 +188,6 @@
   }
 
   /* Baixo */
-
   .badge-severity-low {
     color: var(--lm-low-text);
     background: var(--lm-low-bg);
@@ -203,7 +195,6 @@
   }
 
   /* Scrollbar */
-
   .lm-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: #C4C8D0 transparent;
@@ -226,35 +217,4 @@
   .lm-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #969DA8;
   }
-}
-export default function ExamplePage() {
-  return (
-    <main className="lm-page">
-      <header className="lm-header p-4">
-        <h1 className="text-xl font-bold">
-          Lore Master
-        </h1>
-      </header>
-
-      <section className="p-6">
-        <div className="lm-card p-5">
-          <h2 className="text-lg font-semibold">
-            Problema identificado
-          </h2>
-
-          <p className="my-3 text-sm text-gray-600">
-            Queda de FPS na Zona 3.
-          </p>
-
-          <span className="badge-severity badge-severity-critical">
-            Crítico
-          </span>
-
-          <button className="lm-button-primary ml-3">
-            Ver diagnóstico
-          </button>
-        </div>
-      </section>
-    </main>
-  );
 }
