@@ -56,3 +56,14 @@ export interface GameContextType {
   isLoading: boolean;
   error: string | null;
 }
+
+// Helper opcional para o Dev 4/9 mapear a severidade diretamente para a classe do Design System:
+export function getSeverityBadgeClass(severity: SeverityLevel): string {
+  switch (severity) {
+    case 'critical': return 'badge-severity badge-severity-critical';
+    case 'high': return 'badge-severity badge-severity-high';
+    case 'medium': return 'badge-severity badge-severity-medium';
+    case 'low': return 'badge-severity badge-severity-low';
+    default: return 'badge-severity';
+  }
+}
