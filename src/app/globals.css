@@ -1,15 +1,260 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root { 
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 2, 6, 23;
-  --background-end-rgb: 2, 6, 23;
+/* =========================================
+   LORE MASTER — DESIGN SYSTEM
+   Dev 2 | Paleta provisória
+   ========================================= */
+
+@layer base {
+  :root {
+    /* Identidade visual */
+    --lm-brand: #800638;
+    --lm-brand-hover: #A51F4B;
+    --lm-brand-active: #65042C;
+
+    /* Estrutura do site */
+    --lm-background: #F7F8FA;
+    --lm-surface: #FFFFFF;
+    --lm-border: #E5E7EB;
+
+    /* Textos */
+    --lm-text: #252832;
+    --lm-text-secondary: #606672;
+    --lm-text-muted: #858B96;
+
+    /* Severidade: Crítico */
+    --lm-critical-bg: #FEE2E2;
+    --lm-critical-text: #991B1B;
+    --lm-critical-border: #FECACA;
+
+    /* Severidade: Alto */
+    --lm-high-bg: #FFEDD5;
+    --lm-high-text: #9A3412;
+    --lm-high-border: #FED7AA;
+
+    /* Severidade: Médio */
+    --lm-medium-bg: #FEF3C7;
+    --lm-medium-text: #92400E;
+    --lm-medium-border: #FDE68A;
+
+    /* Severidade: Baixo */
+    --lm-low-bg: #DCFCE7;
+    --lm-low-text: #166534;
+    --lm-low-border: #BBF7D0;
+
+    /* Bordas arredondadas e sombras */
+    --lm-radius: 12px;
+    --lm-shadow: 0 1px 4px rgb(0 0 0 / 5%);
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-height: 100%;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--lm-background);
+    color: var(--lm-text);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--lm-brand-hover);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--lm-brand);
+    color: #FFFFFF;
+  }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: #020617;
-  font-family: Arial, Helvetica, sans-serif;
+/* =========================================
+   COMPONENTES VISUAIS REUTILIZÁVEIS
+   ========================================= */
+
+@layer utilities {
+  /* Fundo das páginas */
+
+  .lm-page {
+    min-height: 100vh;
+    background: var(--lm-background);
+    color: var(--lm-text);
+  }
+
+  /* Cabeçalho */
+
+  .lm-header {
+    background: var(--lm-surface);
+    border-bottom: 1px solid var(--lm-border);
+  }
+
+  /* Menu lateral */
+
+  .lm-sidebar {
+    background: var(--lm-brand);
+    color: #FFFFFF;
+  }
+
+  .lm-sidebar-item {
+    color: #FFFFFF;
+    border-radius: 8px;
+    transition: background-color 160ms ease;
+  }
+
+  .lm-sidebar-item:hover,
+  .lm-sidebar-item[aria-current="page"] {
+    background: var(--lm-brand-hover);
+  }
+
+  /* Cards e painéis */
+
+  .lm-card {
+    background: var(--lm-surface);
+    border: 1px solid var(--lm-border);
+    border-radius: var(--lm-radius);
+    box-shadow: var(--lm-shadow);
+  }
+
+  /* Botão principal */
+
+  .lm-button-primary {
+    background: var(--lm-brand);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    transition: background-color 160ms ease;
+  }
+
+  .lm-button-primary:hover {
+    background: var(--lm-brand-hover);
+  }
+
+  /* Base dos badges */
+
+  .badge-severity {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  /* Crítico */
+
+  .badge-severity-critical {
+    color: var(--lm-critical-text);
+    background: var(--lm-critical-bg);
+    border-color: var(--lm-critical-border);
+  }
+
+  /* Alto */
+
+  .badge-severity-high {
+    color: var(--lm-high-text);
+    background: var(--lm-high-bg);
+    border-color: var(--lm-high-border);
+  }
+
+  /* Médio */
+
+  .badge-severity-medium {
+    color: var(--lm-medium-text);
+    background: var(--lm-medium-bg);
+    border-color: var(--lm-medium-border);
+  }
+
+  /* Baixo */
+
+  .badge-severity-low {
+    color: var(--lm-low-text);
+    background: var(--lm-low-bg);
+    border-color: var(--lm-low-border);
+  }
+
+  /* Scrollbar */
+
+  .lm-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #C4C8D0 transparent;
+  }
+
+  .lm-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .lm-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .lm-scrollbar::-webkit-scrollbar-thumb {
+    background: #C4C8D0;
+    border-radius: 9999px;
+  }
+
+  .lm-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #969DA8;
+  }
+}
+export default function ExamplePage() {
+  return (
+    <main className="lm-page">
+      <header className="lm-header p-4">
+        <h1 className="text-xl font-bold">
+          Lore Master
+        </h1>
+      </header>
+
+      <section className="p-6">
+        <div className="lm-card p-5">
+          <h2 className="text-lg font-semibold">
+            Problema identificado
+          </h2>
+
+          <p className="my-3 text-sm text-gray-600">
+            Queda de FPS na Zona 3.
+          </p>
+
+          <span className="badge-severity badge-severity-critical">
+            Crítico
+          </span>
+
+          <button className="lm-button-primary ml-3">
+            Ver diagnóstico
+          </button>
+        </div>
+      </section>
+    </main>
+  );
 }
