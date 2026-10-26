@@ -5,7 +5,7 @@ import type { GameData } from '../types';
  * Todos os números são fictícios e servem apenas para demonstração.
  *
  * - Deadlock: jogo real da Steam usado como TESTE de fidelidade.
- * - Jogo B / Jogo C: placeholders até a definição dos jogos oficiais.
+ * - Jogo B / Jogo C: placeholders para cenários intermediário e crítico.
  *
  * Regra de coerência: totalReviews = positiveReviews + negativeReviews.
  */
