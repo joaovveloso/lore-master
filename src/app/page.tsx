@@ -64,12 +64,12 @@ export default function HomePage() {
         <Sidebar
           active={activeSection}
           onSelect={setActiveSection}
-          className="md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:w-[268px] md:self-start md:overflow-y-auto border-r border-[#E5E7EB] bg-white"
+          className="md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:w-[268px] md:self-start md:overflow-y-auto"
         />
 
         <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <div className="mx-auto w-full max-w-7xl">
-            {/* Cabeçalho do Dashboard */}
+            {/* Cabeçalho da Seção */}
             <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-gray-500">
@@ -94,7 +94,7 @@ export default function HomePage() {
 
             {activeSection === "overview" && (
               <>
-                {/* Seletor Rápido de Jogos Indie */}
+                {/* Seletor Rápido de Jogos */}
                 <section
                   aria-labelledby="game-heading"
                   className="mb-6 rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-6"
@@ -142,7 +142,7 @@ export default function HomePage() {
                   </div>
                 </section>
 
-                {/* Grid de Indicadores e Métricas */}
+                {/* Métricas */}
                 <section aria-labelledby="metrics-heading">
                   <div className="mb-4">
                     <h2 id="metrics-heading" className="text-lg font-semibold text-[#252832]">
@@ -183,7 +183,7 @@ export default function HomePage() {
                   </div>
                 </section>
 
-                {/* Banner de Execução da IA Gemini 1.5 Flash */}
+                {/* Banner do Gemini */}
                 <section
                   aria-labelledby="analysis-heading"
                   className="mt-6 rounded-2xl border border-[#800638]/20 bg-gradient-to-br from-[#800638] to-[#A51F4B] p-6 text-white shadow-xl sm:p-8"
