@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { GameProvider } from "@/context/GameContext";
-
-const inter = Inter({ subsets: ["latin"] });
+import "./globals.css"; // Importação OBRIGATÓRIA dos estilos
 
 export const metadata: Metadata = {
-  title: "Lore Master - AI Game Detective",
-  description: "Plataforma de Inteligência e Diagnósticos para Games Indie",
+  title: "Lore Master — AI Game Detective",
+  description: "Plataforma de inteligência preditiva e diagnóstico para jogos indie.",
 };
 
 export default function RootLayout({
@@ -17,10 +13,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className={`${inter.className} min-h-screen bg-[#F7F8FA] text-[#252832] antialiased`}>
-        <GameProvider>
-          {children}
-        </GameProvider>
+      <body className="bg-[#F7F8FA] text-[#252832] antialiased">
+        {children}
       </body>
     </html>
   );
