@@ -1,44 +1,81 @@
-import { GameData } from "@/types";
+Codigo do DEV 3 Fase 1,analise se esta correto
+import type { GameData } from '../types';
 
+/**
+ * Dados simulados (mock) para o Lore Master.
+ * Todos os números são fictícios e servem apenas para demonstração.
+ *
+ * - Deadlock: jogo real da Steam usado como TESTE de fidelidade.
+ * - Jogo B / Jogo C: placeholders até a definição dos jogos oficiais.
+ *
+ * Regra de coerência: totalReviews = positiveReviews + negativeReviews.
+ */
 export const mockGames: GameData[] = [
   {
-    appId: 1091500,
-    title: "Cyberpunk Indie Demo",
-    developer: "Studio Indie Alpha",
-    releaseDate: "2024-05-15",
-    genres: ["RPG", "Action", "Cyberpunk"],
-    tags: ["Atmospheric", "Sci-fi", "Singleplayer"],
-    price: 49.99,
+    appId: 1422450,
+    title: 'Deadlock',
+    developer: 'Valve',
+    releaseDate: '2024-08-23',
+    genres: ['Action', 'Free to Play'],
+    tags: [
+      'Hero Shooter',
+      'MOBA',
+      'Third-Person Shooter',
+      'Multiplayer',
+      'Team-Based',
+      'Early Access',
+    ],
+    price: 0,
     steamRating: {
-      positiveReviews: 1250,
-      negativeReviews: 120,
-      totalReviews: 1370,
-      scoreDescription: "Muito Positiva",
+      positiveReviews: 41230,
+      negativeReviews: 5870,
+      totalReviews: 47100,
+      scoreDescription: 'Very Positive',
     },
     metrics: {
-      currentPlayers: 340,
-      peakPlayers24h: 890,
-      estimatedOwners: "50,000 - 100,000",
+      currentPlayers: 38450,
+      peakPlayers24h: 62910,
+      estimatedOwners: '2,000,000 - 5,000,000',
     },
   },
   {
-    appId: 2005000,
-    title: "Pixel Rogue Survivors",
-    developer: "Retro Bit Games",
-    releaseDate: "2025-01-10",
-    genres: ["Roguelike", "Pixel Art", "Action"],
-    tags: ["Difficult", "Indie", "Replay Value"],
+    appId: 900001,
+    title: 'Jogo B',
+    developer: 'Estúdio Placeholder B',
+    releaseDate: '2023-05-12',
+    genres: ['Indie', 'RPG', 'Strategy'],
+    tags: ['Roguelike', 'Turn-Based', 'Pixel Graphics', 'Singleplayer', 'Story Rich'],
     price: 19.99,
     steamRating: {
-      positiveReviews: 4500,
-      negativeReviews: 300,
-      totalReviews: 4800,
-      scoreDescription: "Extremamente Positiva",
+      positiveReviews: 11520,
+      negativeReviews: 4480,
+      totalReviews: 16000,
+      scoreDescription: 'Mostly Positive',
     },
     metrics: {
-      currentPlayers: 1200,
-      peakPlayers24h: 3100,
-      estimatedOwners: "200,000 - 500,000",
+      currentPlayers: 1840,
+      peakPlayers24h: 3275,
+      estimatedOwners: '200,000 - 500,000',
+    },
+  },
+  {
+    appId: 900002,
+    title: 'Jogo C',
+    developer: 'Estúdio Placeholder C',
+    releaseDate: '2024-11-07',
+    genres: ['Indie', 'Adventure', 'Simulation'],
+    tags: ['Survival', 'Crafting', 'Open World', 'Co-op', 'Early Access'],
+    price: 29.99,
+    steamRating: {
+      positiveReviews: 2150,
+      negativeReviews: 3350,
+      totalReviews: 5500,
+      scoreDescription: 'Mostly Negative',
+    },
+    metrics: {
+      currentPlayers: 312,
+      peakPlayers24h: 590,
+      estimatedOwners: '50,000 - 100,000',
     },
   },
 ];
