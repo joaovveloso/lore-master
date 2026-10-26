@@ -1,19 +1,177 @@
 "use client";
 
-// ==========================================
-// RESERVADO PARA O DEV 6
-// Desenvolva a Sidebar com os links para os
-// 5 módulos do sistema e o card do Modo Demo aqui.
-// ==========================================
+import { useState } from "react";
+import { BarChart3, Coins, Gamepad2, LayoutDashboard, Repeat, Sparkles } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-export function Sidebar() {
+import { cn } from "@/lib/utils";
+
+export type SectionId =
+  | "overview"
+  | "recurring"
+  | "diagnosis"
+  | "benchmark"
+  | "credits";
+
+export type Section = {
+  id: SectionId;
+  label: string;
+  description: string;
+  icon: LucideIcon;
+};
+
+/**
+ * The five navigation targets defined for the Lore Master panel.
+ * Keyed by id so a lookup is always defined; SECTIONS keeps the render order.
+ */
+const SECTION_BY_ID = {
+  overview: {
+    id: "overview",
+    label: "Visão Geral",
+    description: "Resumo do que está acontecendo com o feedback do jogo.",
+    icon: LayoutDashboard,
+  },
+  recurring: {
+    id: "recurring",
+    label: "Problemas Recorrentes",
+    description: "Assuntos que aparecem repetidamente nas avaliações.",
+    icon: Repeat,
+  },
+  diagnosis: {
+    id: "diagnosis",
+    label: "Diagnóstico IA",
+    description: "Leitura assistida por IA sobre as causas dos problemas.",
+    icon: Sparkles,
+  },
+  benchmark: {
+    id: "benchmark",
+    label: "Benchmarking",
+    description: "Comparação com outros jogos parecidos.",
+    icon: BarChart3,
+  },
+  credits: {
+    id: "credits",
+    label: "Créditos",
+    description: "Quanto do uso de IA já foi consumido.",
+    icon: Coins,
+  },
+} satisfies Record<SectionId, Section>;
+
+export const SECTIONS: Section[] = [
+  SECTION_BY_ID.overview,
+  SECTION_BY_ID.recurring,
+  SECTION_BY_ID.diagnosis,
+  SECTION_BY_ID.benchmark,
+  SECTION_BY_ID.credits,
+];
+
+export function getSection(id: SectionId): Section {
+  return SECTION_BY_ID[id];
+}
+
+type SidebarProps = {
+  active: SectionId;
+  onSelect: (id: SectionId) => void;
+  className?: string;
+};
+
+export function Sidebar({ active, onSelect, className }: SidebarProps) {
   return (
-    <aside className="w-64 p-4 bg-slate-950 border-r border-slate-800 text-white min-h-[calc(100vh-65px)]">
-      <div className="p-4 border border-dashed border-slate-800 rounded-xl bg-slate-900/50">
-        <p className="text-xs font-mono text-slate-400 text-center">
-          [Sidebar Component - Espaço reservado para Dev 6]
+    <aside
+      className={cn(
+        "flex w-full shrink-0 flex-col border-b border-brand-foreground/10 bg-brand-deep md:h-screen md:w-[268px] md:border-r md:border-b-0",
+        className,
+      )}
+    >
+      <div className="flex items-center gap-3 px-5 py-4">
+        {/* Substituído o asset externo por ícone do Lucide mantendo o mesmo padrão visual */}
+        <span className="flex size-9 items-center justify-center rounded-xl bg-brand text-brand-foreground ring-1 ring-brand-foreground/25">
+          <Gamepad2 size={21} strokeWidth={2} />
+        </span>
+        <div className="min-w-0">
+          <p className="truncate font-display text-[15px] font-bold tracking-tight text-brand-foreground">
+            Lore Master
+          </p>
+          <p className="truncate font-mono text-[11px] uppercase tracking-[0.14em] text-brand-foreground/85">
+            Painel Steam
+          </p>
+        </div>
+      </div>
+
+      <nav
+        aria-label="Navegação principal"
+        className="flex flex-col gap-1.5 px-3 pb-3"
+      >
+        {SECTIONS.map((section) => {
+          const isActive = section.id === active;
+          const Icon = section.icon;
+
+          return (
+            <button
+              key={section.id}
+              type="button"
+              onClick={() => onSelect(section.id)}
+              aria-current={isActive ? "page" : undefined}
+              className={cn(
+                "group relative flex shrink-0 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-foreground/50",
+                isActive
+                  ? "bg-brand text-brand-foreground"
+                  : "text-brand-foreground/75 hover:bg-brand-foreground/10 hover:text-brand-foreground",
+              )}
+            >
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-brand-foreground",
+                  !isActive && "hidden",
+                )}
+              />
+              <Icon className="size-[18px] shrink-0" strokeWidth={2} />
+              <span className="whitespace-nowrap">{section.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+
+      <div className="mt-auto hidden px-5 py-4 md:block">
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-brand-foreground/80">
+          v0.1 · develop
         </p>
       </div>
     </aside>
   );
 }
+
+/** Self-contained demo so the sidebar can be previewed on its own. */
+export function SidebarPreview() {
+  const [active, setActive] = useState<SectionId>("overview");
+  const section = getSection(active);
+
+  return (
+    <div className="flex min-h-screen flex-col bg-background md:flex-row">
+      <Sidebar active={active} onSelect={setActive} />
+      <main className="flex-1 px-5 py-8 md:px-10 md:py-12">
+        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-surface-muted">
+          Lore Master / {section.label}
+        </p>
+        <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+          {section.label}
+        </h1>
+        <p className="mt-2 max-w-xl text-sm text-surface-muted">{section.description}</p>
+
+        <div className="mt-8 rounded-xl border border-dashed border-surface-border bg-surface-sunken px-6 py-10 text-center">
+          <section.icon className="mx-auto size-7 text-surface-muted" />
+          <p className="mt-3 text-sm font-medium text-foreground">
+            Prévia da navegação
+          </p>
+          <p className="mx-auto mt-1 max-w-sm text-sm text-surface-muted">
+            O conteúdo de {section.label} será montado aqui. Por enquanto, use os
+            botões do menu para trocar de seção.
+          </p>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+export default Sidebar;
