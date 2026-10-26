@@ -1,4 +1,3 @@
-Codigo do DEV 3 Fase 1,analise se esta correto
 import type { GameData } from '../types';
 
 /**
