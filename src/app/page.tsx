@@ -20,7 +20,7 @@ export default function HomePage() {
   const [activeSection, setActiveSection] = useState<SectionId>("overview");
   const { selectedGame, setSelectedGame } = useGame();
   
-  // Se nenhum jogo estiver selecionado inicialmente, define o primeiro do mock (Deadlock) por padrão
+  // Define o primeiro jogo do mock (Deadlock) por padrão se nenhum estiver selecionado
   const currentGame = selectedGame ?? mockGames[0];
   const currentSectionInfo = getSection(activeSection);
 
@@ -176,4 +176,50 @@ export default function HomePage() {
 
           {/* Seção 2: Problemas Recorrentes */}
           {activeSection === "recurring" && (
-            <div className="
+            <div className="rounded-xl border border-[#E5E7EB] bg-white p-8 text-center shadow-sm">
+              <ShieldAlert className="mx-auto size-10 text-[#800638]" />
+              <h2 className="mt-4 text-lg font-bold text-[#252832]">Análise de Problemas Recorrentes</h2>
+              <p className="mx-auto mt-1 max-w-md text-sm text-gray-500">
+                O mapeamento automático dos tópicos mais frequentes nas avaliações de {currentGame.title} será renderizado aqui.
+              </p>
+            </div>
+          )}
+
+          {/* Seção 3: Diagnóstico IA */}
+          {activeSection === "diagnosis" && (
+            <div className="rounded-xl border border-[#E5E7EB] bg-white p-8 text-center shadow-sm">
+              <Sparkles className="mx-auto size-10 text-[#A51F4B]" />
+              <h2 className="mt-4 text-lg font-bold text-[#252832]">Diagnóstico Preditivo por IA</h2>
+              <p className="mx-auto mt-1 max-w-md text-sm text-gray-500">
+                Os relatórios gerados pelo Gemini 1.5 Flash para {currentGame.title} aparecerão nesta área. (Custo: 10 créditos).
+              </p>
+            </div>
+          )}
+
+          {/* Seção 4: Benchmarking */}
+          {activeSection === "benchmark" && (
+            <div className="rounded-xl border border-[#E5E7EB] bg-white p-8 text-center shadow-sm">
+              <Gamepad2 className="mx-auto size-10 text-gray-400" />
+              <h2 className="mt-4 text-lg font-bold text-[#252832]">Comparativo de Mercado (Benchmarking)</h2>
+              <p className="mx-auto mt-1 max-w-md text-sm text-gray-500">
+                Compare o desempenho de {currentGame.title} com outros títulos da mesma categoria. (Custo: 5 créditos).
+              </p>
+            </div>
+          )}
+
+          {/* Seção 5: Créditos */}
+          {activeSection === "credits" && (
+            <div className="rounded-xl border border-[#E5E7EB] bg-white p-8 text-center shadow-sm">
+              <Coins className="mx-auto size-10 text-amber-500" />
+              <h2 className="mt-4 text-lg font-bold text-[#252832]">Gestão de Créditos de IA</h2>
+              <p className="mx-auto mt-1 max-w-md text-sm text-gray-500">
+                Gerencie seu plano atual e recargas de créditos para análises avançadas.
+              </p>
+            </div>
+          )}
+
+        </main>
+      </div>
+    </div>
+  );
+}
