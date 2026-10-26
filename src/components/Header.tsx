@@ -6,7 +6,6 @@ import {
   Gamepad2,
   Coins,
   Plus,
-  X,
 } from "lucide-react";
 
 import { useGame } from "@/context/GameContext";
@@ -14,7 +13,6 @@ import { useGame } from "@/context/GameContext";
 export default function Header() {
   const {
     selectedGame,
-    setSelectedGame,
     credits,
   } = useGame();
 
@@ -32,7 +30,6 @@ export default function Header() {
     setIsOpen(false);
 
     // Ponto de integração com o fluxo de análise via Steam.
-    // A implementação depende da rota ou modal definido pela equipe.
     window.dispatchEvent(
       new CustomEvent("lore-master:new-game")
     );
@@ -79,7 +76,7 @@ export default function Header() {
                   </span>
 
                   <span className="block truncate text-sm font-semibold text-[#252832]">
-                    {selectedGame?.name ?? "Selecionar jogo"}
+                    {selectedGame?.title ?? "Selecionar jogo"}
                   </span>
                 </span>
               </span>
@@ -123,7 +120,7 @@ export default function Header() {
                     >
                       <Gamepad2 size={17} />
                       <span className="min-w-0 flex-1 truncate">
-                        {selectedGame.name}
+                        {selectedGame.title}
                       </span>
                       <span className="size-2 rounded-full bg-[#A51F4B]" />
                     </button>
