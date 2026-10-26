@@ -2,10 +2,11 @@ import type { GameData } from '../types';
 
 /**
  * Dados simulados (mock) para o Lore Master.
- * Todos os números são fictícios e servem apenas para demonstração.
+ * Dados ajustados com base em jogos reais da Steam para testes de fidelidade.
  *
- * - Deadlock: jogo real da Steam usado como TESTE de fidelidade.
- * - Jogo B / Jogo C: placeholders para cenários intermediário e crítico.
+ * - Deadlock: TESTE de fidelidade (Hero Shooter / Early Access).
+ * - Resident Evil 4: Jogo AAA Premium (Overwhelmingly Positive).
+ * - Among Us: Jogo Indie Viral / Casual (Very Positive).
  *
  * Regra de coerência: totalReviews = positiveReviews + negativeReviews.
  */
@@ -38,43 +39,57 @@ export const mockGames: GameData[] = [
     },
   },
   {
-    appId: 900001,
-    title: 'Jogo B',
-    developer: 'Estúdio Placeholder B',
-    releaseDate: '2023-05-12',
-    genres: ['Indie', 'RPG', 'Strategy'],
-    tags: ['Roguelike', 'Turn-Based', 'Pixel Graphics', 'Singleplayer', 'Story Rich'],
-    price: 19.99,
+    appId: 2050650,
+    title: 'Resident Evil 4',
+    developer: 'CAPCOM Co., Ltd.',
+    releaseDate: '2023-03-24',
+    genres: ['Action', 'Adventure'],
+    tags: [
+      'Action',
+      'Horror',
+      'Survival Horror',
+      'Third Person',
+      'Zombies',
+      'Singleplayer',
+    ],
+    price: 139.00,
     steamRating: {
-      positiveReviews: 11520,
-      negativeReviews: 4480,
-      totalReviews: 16000,
-      scoreDescription: 'Mostly Positive',
+      positiveReviews: 125800,
+      negativeReviews: 3200,
+      totalReviews: 129000,
+      scoreDescription: 'Overwhelmingly Positive',
     },
     metrics: {
-      currentPlayers: 1840,
-      peakPlayers24h: 3275,
-      estimatedOwners: '200,000 - 500,000',
+      currentPlayers: 15420,
+      peakPlayers24h: 28900,
+      estimatedOwners: '5,000,000 - 10,000,000',
     },
   },
   {
-    appId: 900002,
-    title: 'Jogo C',
-    developer: 'Estúdio Placeholder C',
-    releaseDate: '2024-11-07',
-    genres: ['Indie', 'Adventure', 'Simulation'],
-    tags: ['Survival', 'Crafting', 'Open World', 'Co-op', 'Early Access'],
-    price: 29.99,
+    appId: 945360,
+    title: 'Among Us',
+    developer: 'Innersloth',
+    releaseDate: '2018-11-16',
+    genres: ['Casual', 'Indie'],
+    tags: [
+      'Multiplayer',
+      'Online Co-Op',
+      'Social Deduction',
+      'Space',
+      'Casual',
+      '2D',
+    ],
+    price: 19.99,
     steamRating: {
-      positiveReviews: 2150,
-      negativeReviews: 3350,
-      totalReviews: 5500,
-      scoreDescription: 'Mostly Negative',
+      positiveReviews: 598000,
+      negativeReviews: 42000,
+      totalReviews: 640000,
+      scoreDescription: 'Very Positive',
     },
     metrics: {
-      currentPlayers: 312,
-      peakPlayers24h: 590,
-      estimatedOwners: '50,000 - 100,000',
+      currentPlayers: 8900,
+      peakPlayers24h: 14200,
+      estimatedOwners: '10,000,000 - 20,000,000',
     },
   },
 ];
