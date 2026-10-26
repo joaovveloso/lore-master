@@ -7,7 +7,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   const handleInstantAccess = () => {
-    // Redireciona de forma fluida para a rota principal do Dashboard
+    // Redireciona para o Dashboard principal
     router.push("/");
   };
 
@@ -15,7 +15,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-[#F7F8FA] p-4 text-[#252832]">
       <div className="w-full max-w-md rounded-2xl border border-[#E5E7EB] bg-white p-8 shadow-xl">
         <div className="flex flex-col items-center text-center">
-          {/* Ícone de Chave em destaque no tom Bordô */}
+          {/* Ícone de Chave em destaque na paleta Bordô */}
           <div className="flex size-14 items-center justify-center rounded-2xl bg-[#800638]/10 text-[#800638]">
             <KeyRound size={28} />
           </div>
