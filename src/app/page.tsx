@@ -20,7 +20,10 @@ import { useGame } from "@/context/GameContext";
 import { mockGames } from "@/data/mockData";
 
 export default function HomePage() {
-  const { selectedGame, setSelectedGame } = useGame();
+  const gameContext = useGame();
+  const selectedGame = gameContext?.selectedGame ?? mockGames[0];
+  const setSelectedGame = gameContext?.setSelectedGame ?? (() => {});
+
   const [activeSection, setActiveSection] = useState<SectionId>("overview");
 
   const section = getSection(activeSection);
