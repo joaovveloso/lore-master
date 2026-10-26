@@ -4,7 +4,7 @@
 
 /* =========================================
    LORE MASTER — DESIGN SYSTEM
-   Dev 2 | Paleta provisória
+   Dev 2 | Paleta Oficial
    ========================================= */
 
 @layer base {
@@ -46,7 +46,7 @@
 
     /* Bordas arredondadas e sombras */
     --lm-radius: 12px;
-    --lm-shadow: 0 1px 4px rgb(0 0 0 / 5%);
+    --lm-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
   }
 
   *,
@@ -63,9 +63,9 @@
   body {
     margin: 0;
     min-height: 100vh;
-    background: var(--lm-background);
+    background-color: var(--lm-background);
     color: var(--lm-text);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
   button,
@@ -90,7 +90,7 @@
   }
 
   ::selection {
-    background: var(--lm-brand);
+    background-color: var(--lm-brand);
     color: #FFFFFF;
   }
 }
@@ -100,22 +100,19 @@
    ========================================= */
 
 @layer utilities {
-  /* Fundo das páginas */
   .lm-page {
     min-height: 100vh;
-    background: var(--lm-background);
+    background-color: var(--lm-background);
     color: var(--lm-text);
   }
 
-  /* Cabeçalho */
   .lm-header {
-    background: var(--lm-surface);
+    background-color: var(--lm-surface);
     border-bottom: 1px solid var(--lm-border);
   }
 
-  /* Menu lateral */
   .lm-sidebar {
-    background: var(--lm-brand);
+    background-color: var(--lm-brand);
     color: #FFFFFF;
   }
 
@@ -127,20 +124,18 @@
 
   .lm-sidebar-item:hover,
   .lm-sidebar-item[aria-current="page"] {
-    background: var(--lm-brand-hover);
+    background-color: var(--lm-brand-hover);
   }
 
-  /* Cards e painéis */
   .lm-card {
-    background: var(--lm-surface);
+    background-color: var(--lm-surface);
     border: 1px solid var(--lm-border);
     border-radius: var(--lm-radius);
     box-shadow: var(--lm-shadow);
   }
 
-  /* Botão principal */
   .lm-button-primary {
-    background: var(--lm-brand);
+    background-color: var(--lm-brand);
     color: #FFFFFF;
     border: none;
     border-radius: 8px;
@@ -149,10 +144,9 @@
   }
 
   .lm-button-primary:hover {
-    background: var(--lm-brand-hover);
+    background-color: var(--lm-brand-hover);
   }
 
-  /* Base dos badges */
   .badge-severity {
     display: inline-flex;
     align-items: center;
@@ -166,35 +160,30 @@
     white-space: nowrap;
   }
 
-  /* Crítico */
   .badge-severity-critical {
     color: var(--lm-critical-text);
-    background: var(--lm-critical-bg);
+    background-color: var(--lm-critical-bg);
     border-color: var(--lm-critical-border);
   }
 
-  /* Alto */
   .badge-severity-high {
     color: var(--lm-high-text);
-    background: var(--lm-high-bg);
+    background-color: var(--lm-high-bg);
     border-color: var(--lm-high-border);
   }
 
-  /* Médio */
   .badge-severity-medium {
     color: var(--lm-medium-text);
-    background: var(--lm-medium-bg);
+    background-color: var(--lm-medium-bg);
     border-color: var(--lm-medium-border);
   }
 
-  /* Baixo */
   .badge-severity-low {
     color: var(--lm-low-text);
-    background: var(--lm-low-bg);
+    background-color: var(--lm-low-bg);
     border-color: var(--lm-low-border);
   }
 
-  /* Scrollbar */
   .lm-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: #C4C8D0 transparent;
