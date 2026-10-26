@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import {
-  Activity,
   BarChart3,
   Gamepad2,
   MessageSquare,
@@ -10,7 +9,6 @@ import {
   Star,
   Users,
   ArrowRight,
-  LogOut,
 } from "lucide-react";
 
 import Header from "@/components/Header";
@@ -20,10 +18,8 @@ import Sidebar, {
 } from "@/components/Sidebar";
 import { useGame } from "@/context/GameContext";
 import { mockGames } from "@/data/mockData";
-import { useRouter } from "next/navigation";
 
 export default function HomePage() {
-  const router = useRouter();
   const { selectedGame, setSelectedGame } = useGame();
   const [activeSection, setActiveSection] = useState<SectionId>("overview");
 
@@ -65,7 +61,7 @@ export default function HomePage() {
         <Sidebar
           active={activeSection}
           onSelect={setActiveSection}
-          className="md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:w-[268px] md:self-start md:overflow-y-auto"
+          className="md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:w-[268px] md:self-start md:overflow-y-auto border-r border-[#E5E7EB] bg-white"
         />
 
         <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
@@ -76,26 +72,20 @@ export default function HomePage() {
                 <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-gray-500">
                   Lore Master / {section.label}
                 </p>
-                <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
+                <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#252832] sm:text-3xl">
                   {section.label}
                 </h1>
               </div>
 
               <div className="flex items-center gap-3">
-                <span className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-3 py-1.5 text-xs font-medium text-gray-600">
-                  <span className="size-2 rounded-full bg-emerald-500" />
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-sm">
+                  <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
                   {selectedGame ? `Ativo: ${selectedGame.title}` : "Modo Padrão (Deadlock)"}
                 </span>
 
-                {/* Botão para retornar à página de login */}
-                <button
-                  type="button"
-                  onClick={() => router.push("/login")}
-                  className="flex items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 shadow-sm hover:bg-gray-50 transition-colors"
-                >
-                  <LogOut size={14} />
-                  <span>Sair</span>
-                </button>
+                <span className="rounded-lg bg-[#800638]/10 px-3 py-1.5 font-mono text-xs font-semibold text-[#800638]">
+                  v0.1 • Develop
+                </span>
               </div>
             </div>
 
@@ -136,10 +126,10 @@ export default function HomePage() {
                           key={game.appId}
                           type="button"
                           onClick={() => setSelectedGame(game)}
-                          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                          className={`rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
                             currentGame.appId === game.appId
-                              ? "bg-[#800638] text-white shadow-sm"
-                              : "border border-[#E5E7EB] bg-white text-gray-700 hover:bg-[#F7F8FA]"
+                              ? "bg-[#800638] text-white shadow-md shadow-[#800638]/20"
+                              : "border border-[#E5E7EB] bg-white text-gray-700 hover:bg-[#F7F8FA] hover:border-gray-300"
                           }`}
                         >
                           {game.title}
@@ -152,7 +142,7 @@ export default function HomePage() {
                 {/* Grid de Indicadores e Métricas */}
                 <section aria-labelledby="metrics-heading">
                   <div className="mb-4">
-                    <h2 id="metrics-heading" className="text-lg font-semibold">
+                    <h2 id="metrics-heading" className="text-lg font-semibold text-[#252832]">
                       Indicadores da análise
                     </h2>
                     <p className="mt-1 text-sm text-gray-500">
@@ -166,14 +156,14 @@ export default function HomePage() {
                       return (
                         <article
                           key={metric.label}
-                          className="min-w-0 rounded-xl border border-[#E5E7EB] bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                          className="min-w-0 rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm transition-all hover:border-[#800638]/30 hover:shadow-md"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <p className="text-sm font-medium text-gray-600">
                               {metric.label}
                             </p>
-                            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#800638]/10 text-[#800638]">
-                              <Icon size={19} />
+                            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#800638]/10 text-[#800638]">
+                              <Icon size={18} />
                             </span>
                           </div>
 
@@ -193,18 +183,18 @@ export default function HomePage() {
                 {/* Banner de Execução da IA Gemini 1.5 Flash */}
                 <section
                   aria-labelledby="analysis-heading"
-                  className="mt-6 rounded-2xl border border-[#E5E7EB] bg-gradient-to-br from-[#800638] to-[#A51F4B] p-6 text-white shadow-lg sm:p-8"
+                  className="mt-6 rounded-2xl border border-[#800638]/20 bg-gradient-to-br from-[#800638] to-[#A51F4B] p-6 text-white shadow-xl sm:p-8"
                 >
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-2">
-                      <div className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white">
+                      <div className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
                         <Sparkles size={14} />
                         <span>Motor IA Gemini 1.5 Flash</span>
                       </div>
                       <h2 id="analysis-heading" className="text-xl font-bold">
                         Pronto para executar o diagnóstico de {currentGame.title}?
                       </h2>
-                      <p className="max-w-xl text-sm text-white/80">
+                      <p className="max-w-xl text-sm text-white/90">
                         O motor analítico irá processar os dados da Steam para extrair padrões de bugs e recomendações acionáveis.
                       </p>
                     </div>
@@ -212,7 +202,7 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={() => setActiveSection("diagnosis")}
-                      className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-[#800638] transition-colors hover:bg-white/90"
+                      className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-bold text-[#800638] shadow-lg transition-all hover:bg-gray-50 hover:shadow-xl active:scale-95"
                     >
                       <span>Ir para Diagnóstico</span>
                       <ArrowRight size={17} />
@@ -223,16 +213,16 @@ export default function HomePage() {
             )}
 
             {activeSection !== "overview" && (
-              <section className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8">
-                <div className="mx-auto flex max-w-lg flex-col items-center py-8 text-center">
-                  <div className="flex size-12 items-center justify-center rounded-xl bg-[#800638]/10 text-[#800638]">
-                    <BarChart3 size={24} />
+              <section className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm">
+                <div className="mx-auto flex max-w-lg flex-col items-center py-12 text-center">
+                  <div className="flex size-14 items-center justify-center rounded-2xl bg-[#800638]/10 text-[#800638]">
+                    <BarChart3 size={28} />
                   </div>
 
-                  <h2 className="mt-4 text-lg font-semibold">{section.label}</h2>
+                  <h2 className="mt-4 text-xl font-bold text-[#252832]">{section.label}</h2>
 
                   <p className="mt-2 text-sm leading-6 text-gray-600">
-                    Esta área está preparada para receber os componentes e dados desta seção.
+                    Esta seção está preparada para exibir os relatórios detalhados e métricas avançadas da Fase 2.
                   </p>
                 </div>
               </section>
