@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.css"; // Importação OBRIGATÓRIA dos estilos
+import "./globals.css";
+import { GameProvider } from "@/context/GameContext";
 
 export const metadata: Metadata = {
   title: "Lore Master — AI Game Detective",
@@ -14,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="bg-[#F7F8FA] text-[#252832] antialiased">
-        {children}
+        <GameProvider>
+          {children}
+        </GameProvider>
       </body>
     </html>
   );
