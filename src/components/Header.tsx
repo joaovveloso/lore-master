@@ -29,7 +29,6 @@ export default function Header() {
   const handleNewGame = useCallback(() => {
     setIsOpen(false);
 
-    // Ponto de integração com o fluxo de análise via Steam.
     window.dispatchEvent(
       new CustomEvent("lore-master:new-game")
     );
@@ -38,15 +37,17 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#E5E7EB] bg-white">
       <div className="flex min-h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        {/* Identidade visual */}
+        {/* Logotipo oficial */}
         <a
           href="/"
           className="flex shrink-0 items-center gap-2.5 rounded-md outline-none transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-[#A51F4B] focus-visible:ring-offset-2"
           aria-label="Lore Master - Página inicial"
         >
-          <span className="flex size-9 items-center justify-center rounded-xl bg-[#800638] text-white">
-            <Gamepad2 size={21} strokeWidth={2} />
-          </span>
+          <img
+            src="/lore-master-logo.jpeg"
+            alt="Lore Master Logo"
+            className="size-9 rounded-xl object-cover shadow-sm"
+          />
 
           <span className="text-lg font-bold tracking-tight text-[#252832] sm:text-xl">
             Lore<span className="text-[#A51F4B]">Master</span>
