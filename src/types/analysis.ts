@@ -1,5 +1,3 @@
-// src/types/analysis.ts
-
 export interface Bottleneck {
   category: 'Game Design' | 'Marketing' | 'Monetization' | 'Technical';
   issue: string;
@@ -23,10 +21,8 @@ export interface AnalysisResponse {
 export interface AnalyzePayload {
   gameTitle: string;
   description: string;
-  steamData?: {
-    appId: number;
-    reviewsCount: number;
-    ratingDesc: string;
-    peakPlayers: number;
-  };
+  steamData?: Record<string, unknown>;
 }
+
+// Alias para garantir retrocompatibilidade total com a rota e serviços
+export type AnalyzeRequestBody = AnalyzePayload;
