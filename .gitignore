@@ -1,0 +1,9 @@
+# Variáveis de ambiente locais (mantém suas chaves protegidas)
+.env*.local
+.env
+
+# Dependências e pastas de build
+node_modules/
+.next/
+build/
+dist/
