@@ -1,3 +1,5 @@
+// src/types/analysis.ts
+
 export interface Bottleneck {
   category: 'Game Design' | 'Marketing' | 'Monetization' | 'Technical';
   issue: string;
@@ -11,15 +13,20 @@ export interface Recommendation {
 }
 
 export interface AnalysisResponse {
-  healthScore: number;
-  summary: string;
+  healthScore: number; // De 0 a 100
+  summary: string;     // Resumo executivo do potencial do jogo
   bottlenecks: Bottleneck[];
   recommendations: Recommendation[];
   benchmarkComparison?: string;
 }
 
-export interface AnalyzeRequestBody {
+export interface AnalyzePayload {
   gameTitle: string;
   description: string;
-  steamData?: Record<string, unknown>;
+  steamData?: {
+    appId: number;
+    reviewsCount: number;
+    ratingDesc: string;
+    peakPlayers: number;
+  };
 }
