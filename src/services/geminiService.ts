@@ -1,30 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { AnalysisResponse, AnalyzeRequestBody } from '@/types/analysis';
-
-// Prompt base/fallback (enquanto o Dev 4 finaliza o aiPrompts.ts)
-const DEFAULT_SYSTEM_INSTRUCTION = `
-Você é o motor preditivo do "Lore Master", especialista em diagnóstico de jogos indie.
-Análise o jogo e retorne ESTRITAMENTE um objeto JSON válido, SEM NENHUMA MARCAÇÃO DE MARKDOWN (sem \`\`\`json ou \`\`\`), no seguinte formato:
-{
-  "healthScore": 85,
-  "summary": "Resumo executivo do potencial comercial e de design do jogo.",
-  "bottlenecks": [
-    {
-      "category": "Marketing",
-      "issue": "Problema identificado",
-      "impact": "High"
-    }
-  ],
-  "recommendations": [
-    {
-      "action": "Ação corretiva recomendada",
-      "priority": "High",
-      "expectedOutcome": "Resultado esperado"
-    }
-  ],
-  "benchmarkComparison": "Comparativo curto com indies do mesmo nicho."
-}
-`;
+import { AnalysisResponse, AnalyzePayload } from '@/types/analysis';
+import { buildAnalysisPrompt } from '@/services/aiPrompts';
 
 /**
  * Clean e parse do output da LLM garantindo resiliência a blocos de código markdown.
@@ -34,7 +10,7 @@ function parseAndSanitizeResponse(rawText: string): AnalysisResponse {
     throw new Error('A API do Gemini retornou uma resposta vazia.');
   }
 
-  // Remove blocos de markdown ```json ... ``` se o modelo retornar
+  // Remove blocos de código markdown ```json ... ``` caso a LLM insira
   let sanitized = rawText.trim();
   if (sanitized.startsWith('```')) {
     sanitized = sanitized.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
@@ -43,7 +19,7 @@ function parseAndSanitizeResponse(rawText: string): AnalysisResponse {
   try {
     const parsed = JSON.parse(sanitized) as AnalysisResponse;
 
-    // Validação mínima dos campos obrigatórios
+    // Validação estrutural básica dos campos obrigatórios
     if (typeof parsed.healthScore !== 'number' || !Array.isArray(parsed.bottlenecks)) {
       throw new Error('Estrutura de JSON inválida para AnalysisResponse.');
     }
@@ -56,7 +32,7 @@ function parseAndSanitizeResponse(rawText: string): AnalysisResponse {
 }
 
 export async function runGeminiAnalysis(
-  payload: AnalyzeRequestBody,
+  payload: AnalyzePayload,
   customPrompt?: string
 ): Promise<AnalysisResponse> {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -73,7 +49,8 @@ export async function runGeminiAnalysis(
     },
   });
 
-  const promptContent = customPrompt || `${DEFAULT_SYSTEM_INSTRUCTION}\n\nDados para Análise:\n${JSON.stringify(payload, null, 2)}`;
+  // Utiliza o gerador de prompt oficial do Dev 4 (aiPrompts.ts) ou um customPrompt
+  const promptContent = customPrompt || buildAnalysisPrompt(payload);
 
   const result = await model.generateContent(promptContent);
   const responseText = result.response.text();
