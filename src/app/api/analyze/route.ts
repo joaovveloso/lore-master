@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { runGeminiAnalysis } from '@/services/geminiService';
 import { AnalyzeRequestBody } from '@/types/analysis';
+import { sanitizeInputText } from '@/utils/sanitizer'; // Import do sanitizador (Dev 8)
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Leitura e validação do payload enviado no body
+    // 2. Leitura do payload do body
     const body: AnalyzeRequestBody = await req.json();
 
     if (!body.gameTitle || !body.description) {
@@ -22,10 +23,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3. Processamento via serviço do Gemini 1.5 Flash
-    const analysis = await runGeminiAnalysis(body);
+    // 3. Sanitização e validação de tamanho mínimo (< 20 caracteres)
+    const validation = sanitizeInputText(body.description);
+    if (!validation.isValid) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
 
-    // 4. Retorno estruturado com status 200
+    // 4. Utiliza o texto higienizado
+    const sanitizedBody: AnalyzeRequestBody = {
+      ...body,
+      description: validation.sanitizedText,
+    };
+
+    // 5. Processamento via Gemini 1.5 Flash
+    const analysis = await runGeminiAnalysis(sanitizedBody);
+
+    // 6. Retorno estruturado com status 200
     return NextResponse.json(analysis, { status: 200 });
 
   } catch (error) {
