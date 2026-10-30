@@ -9,6 +9,9 @@ import {
   Star,
   Users,
   ArrowRight,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
 } from "lucide-react";
 
 import Header from "@/components/Header";
@@ -18,6 +21,7 @@ import Sidebar, {
 } from "@/components/Sidebar";
 import { useGame } from "@/context/GameContext";
 import { mockGames } from "@/data/mockData";
+import { AnalysisResponse } from "@/types/analysis";
 
 export default function HomePage() {
   const gameContext = useGame();
@@ -26,8 +30,43 @@ export default function HomePage() {
 
   const [activeSection, setActiveSection] = useState<SectionId>("overview");
 
+  // Estados para integração com a API da IA (Dev 9)
+  const [loading, setLoading] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   const section = getSection(activeSection);
   const currentGame = selectedGame ?? mockGames[0];
+
+  // Função para acionar o motor de IA (Dev 9 -> /api/analyze)
+  const handleRunAnalysis = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gameTitle: currentGame.title,
+          description: `Jogo desenvolvido por ${currentGame.developer}. AppID: ${currentGame.appId}.`,
+          steamData: currentGame,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Falha ao processar a análise preditiva.");
+      }
+
+      setAnalysisResult(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro desconhecido ao chamar a API.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const metrics = [
     {
@@ -50,8 +89,8 @@ export default function HomePage() {
     },
     {
       label: "Diagnóstico por IA",
-      value: "Pronto",
-      description: "Gemini 1.5 Flash ativado",
+      value: analysisResult ? `${analysisResult.healthScore}/100` : "Pronto",
+      description: analysisResult ? "Análise concluída" : "Gemini 1.5 Flash ativado",
       icon: Sparkles,
     },
   ];
@@ -215,7 +254,107 @@ export default function HomePage() {
               </>
             )}
 
-            {activeSection !== "overview" && (
+            {/* Renderização da Seção de Diagnóstico (Integrada à API pelo Dev 9) */}
+            {activeSection === "diagnosis" && (
+              <section className="space-y-6">
+                <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-gray-100">
+                    <div>
+                      <h2 className="text-xl font-bold text-[#252832]">Motor Preditivo Lore Master</h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Dispare o diagnóstico em tempo real para {currentGame.title} utilizando a API Route do Gemini.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleRunAnalysis}
+                      disabled={loading}
+                      className="flex items-center justify-center gap-2 rounded-xl bg-[#800638] px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-[#800638]/20 transition-all hover:bg-[#60042a] disabled:opacity-50"
+                    >
+                      {loading ? (
+                        <>
+                          <Loader2 size={18} className="animate-spin" />
+                          <span>Processando IA...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles size={18} />
+                          <span>Executar Diagnóstico com IA</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Exibição de Erros */}
+                  {error && (
+                    <div className="mt-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
+                      <AlertCircle size={20} className="shrink-0 mt-0.5" />
+                      <div>
+                        <h4 className="font-semibold text-sm">Erro ao gerar diagnóstico</h4>
+                        <p className="text-xs mt-1">{error}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Exibição dos Resultados da IA */}
+                  {analysisResult && (
+                    <div className="mt-6 space-y-6">
+                      <div className="flex items-center justify-between rounded-xl bg-slate-900 p-6 text-white">
+                        <div>
+                          <p className="text-xs uppercase tracking-wider text-gray-400 font-mono">Health Score Preditivo</p>
+                          <p className="text-4xl font-extrabold text-emerald-400 mt-1">{analysisResult.healthScore} / 100</p>
+                        </div>
+                        <CheckCircle2 size={40} className="text-emerald-400" />
+                      </div>
+
+                      <div className="rounded-xl border border-gray-100 bg-[#F7F8FA] p-5">
+                        <h3 className="font-bold text-[#252832] text-md">Resumo Executivo</h3>
+                        <p className="text-sm text-gray-600 mt-2 leading-relaxed">{analysisResult.summary}</p>
+                      </div>
+
+                      {analysisResult.bottlenecks?.length > 0 && (
+                        <div>
+                          <h3 className="font-bold text-[#252832] text-md mb-3">Gargalos Identificados</h3>
+                          <div className="grid gap-3 sm:grid-cols-2">
+                            {analysisResult.bottlenecks.map((b, idx) => (
+                              <div key={idx} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                                <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-red-100 text-red-800 mb-2">
+                                  {b.category} • Impacto {b.impact}
+                                </span>
+                                <p className="text-sm font-medium text-gray-800">{b.issue}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {analysisResult.recommendations?.length > 0 && (
+                        <div>
+                          <h3 className="font-bold text-[#252832] text-md mb-3">Recomendações Práticas</h3>
+                          <div className="space-y-2">
+                            {analysisResult.recommendations.map((r, idx) => (
+                              <div key={idx} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm flex items-start justify-between gap-4">
+                                <div>
+                                  <p className="text-sm font-bold text-[#252832]">{r.action}</p>
+                                  <p className="text-xs text-gray-500 mt-1">Resultado Esperado: {r.expectedOutcome}</p>
+                                </div>
+                                <span className="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700">
+                                  Prioridade {r.priority}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {/* Outras seções */}
+            {activeSection !== "overview" && activeSection !== "diagnosis" && (
               <section className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm">
                 <div className="mx-auto flex max-w-lg flex-col items-center py-12 text-center">
                   <div className="flex size-14 items-center justify-center rounded-2xl bg-[#800638]/10 text-[#800638]">
