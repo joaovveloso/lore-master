@@ -4,7 +4,7 @@ import { AnalyzeRequestBody } from '@/types/analysis';
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. Validação da chave de API
+    // 1. Validação da chave de API no ambiente
     if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
         { error: 'Infraestrutura: GEMINI_API_KEY não encontrada no servidor.' },
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Extração do Payload
+    // 2. Leitura e validação do payload enviado no body
     const body: AnalyzeRequestBody = await req.json();
 
     if (!body.gameTitle || !body.description) {
@@ -22,10 +22,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3. Chamada ao Motor Gemini (Dev 9)
+    // 3. Processamento via serviço do Gemini 1.5 Flash
     const analysis = await runGeminiAnalysis(body);
 
-    // 4. Retorno Estruturado
+    // 4. Retorno estruturado com status 200
     return NextResponse.json(analysis, { status: 200 });
 
   } catch (error) {
