@@ -43,12 +43,21 @@ export function GameProvider({ children }: GameProviderProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Valida se o usuário possui saldo suficiente para a operação (Dev 5 Dependency)
+   */
+  const hasEnoughCredits = useCallback((cost: number): boolean => {
+    return creditsRef.current.availableCredits >= cost;
+  }, []);
+
+  /**
+   * Deduz créditos de forma atômica e segura (Dev 9 Dependency)
+   * 10 créditos para diagnósticos completos / 5 para benchmarking
+   */
   const deductCredits = useCallback(
     async (amount: number): Promise<boolean> => {
-      if (amount !== 5 && amount !== 10) {
-        setError(
-          "Operação inválida. Use 10 créditos para diagnóstico ou 5 para benchmarking."
-        );
+      if (amount <= 0) {
+        setError("Valor de créditos inválido para dedução.");
         return false;
       }
 
@@ -69,7 +78,7 @@ export function GameProvider({ children }: GameProviderProps) {
             currentAccount.availableCredits - amount,
         };
 
-        // Atualiza a referência antes de permitir outra operação.
+        // Atualiza a referência e o estado reativo
         creditsRef.current = updatedAccount;
         setCredits(updatedAccount);
 
@@ -89,6 +98,7 @@ export function GameProvider({ children }: GameProviderProps) {
     setSelectedGame,
     credits,
     deductCredits,
+    hasEnoughCredits, // Exposto para o Dev 5
     isLoading,
     error,
   };
