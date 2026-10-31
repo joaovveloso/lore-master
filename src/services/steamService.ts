@@ -1,4 +1,4 @@
-import { mockAnalysisData } from "@/services/mockData";
+import { getMockGameFallback } from "@/services/mockData";
 import { sanitizeInputText } from "@/utils/sanitizer";
 import { FormattedSteamData, SteamAppDetailsRaw, SteamReviewRaw } from "@/types/steam";
 
@@ -73,23 +73,20 @@ export async function fetchSteamDataByAppId(appId: number): Promise<FormattedSte
  * Estruturação do fallback utilizando a base mockada segura (Dev 8)
  */
 function getFallbackMockSteamData(appId: number): FormattedSteamData {
-  // Trata caso mockAnalysisData seja objeto direto ou função
-  const mockAnalysis = typeof mockAnalysisData === "function" ? mockAnalysisData() : mockAnalysisData;
+  const mockProfile = getMockGameFallback(appId);
   
-  const mockText = mockAnalysis?.gargalosIdentificados
-    ? mockAnalysis.gargalosIdentificados
-        .map((g: { categoria: string; problema: string; causa: string }) => `[${g.categoria.toUpperCase()}] ${g.problema}: ${g.causa}`)
-        .join("\n")
-    : "Feedback simulado de resiliência do sistema Lore Master.";
+  const mockText = mockProfile.mockAnalysis.bottlenecks
+    .map((b) => `[${b.category.toUpperCase()}] ${b.issue}: Impacto ${b.impact}`)
+    .join("\n");
 
   return {
-    appId: appId || 1086940,
-    gameTitle: "Indie Game Demo (Modo Resiliência)",
+    appId: mockProfile.appId,
+    gameTitle: mockProfile.title,
     headerImage: "https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/header.jpg",
-    shortDescription: "Dados providos pelo fallback de resiliência corporativo do Lore Master.",
-    genres: ["Indie", "Estratégia"],
-    totalReviewsAnalyzed: 150,
-    positivePercentage: mockAnalysis?.healthScore || 85,
+    shortDescription: mockProfile.description,
+    genres: ["Indie", "Ação"],
+    totalReviewsAnalyzed: mockProfile.steamRating.totalReviews,
+    positivePercentage: mockProfile.mockAnalysis.healthScore,
     aggregatedReviewsText: sanitizeInputText(mockText),
     isMockFallback: true,
   };
