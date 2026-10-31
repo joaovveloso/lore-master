@@ -1,79 +1,75 @@
 "use client";
 
 import React, { useState } from "react";
-import { sanitizeInputText } from "@/utils/sanitizer";
+import { useGame } from "@/context/GameContext";
 
-interface CustomTextFormProps {
-  onSubmitAnalysis: (text: string) => void;
-  isLoading?: boolean;
-}
-
-export function CustomTextForm({ onSubmitAnalysis, isLoading = false }: CustomTextFormProps) {
-  const [rawText, setRawText] = useState("");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  const MIN_CHARS = 20;
-  const MAX_CHARS = 5000;
+export default function CustomTextForm() {
+  const { runLocalAnalysis, isLoading, deductCredits, hasEnoughCredits } = useGame();
+  const [gameTitle, setGameTitle] = useState("Meu Jogo Indie");
+  const [description, setDescription] = useState("");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage(null);
+    setErrorMsg(null);
 
-    if (rawText.trim().length < MIN_CHARS) {
-      setErrorMessage(`O feedback precisa ter no mínimo ${MIN_CHARS} caracteres para uma análise precisa.`);
+    if (!description.trim()) {
+      setErrorMsg("Por favor, insira o feedback ou a descrição do jogo.");
       return;
     }
 
-    // Aplicação da sanitização oficial do projeto
-    const sanitizerResult = sanitizeInputText(rawText);
-    const cleanedText = typeof sanitizerResult === "string"
-      ? sanitizerResult
-      : (sanitizerResult as any).sanitizedText || (sanitizerResult as any).text || rawText;
+    if (!hasEnoughCredits(10)) {
+      setErrorMsg("Créditos insuficientes! Você precisa de pelo menos 10 créditos.");
+      return;
+    }
 
-    onSubmitAnalysis(cleanedText);
+    const success = deductCredits(10);
+    if (!success) return;
+
+    runLocalAnalysis(gameTitle, description);
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-xl border border-gray-100">
-      <div className="mb-4">
-        <h3 className="text-xl font-bold text-gray-900">Ingestão de Feedback Manual</h3>
-        <p className="text-sm text-gray-500 mt-1">
-          Cole avaliações de fóruns, Discord ou pesquisas para gerar um diagnóstico instantâneo.
-        </p>
+    <div className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-6 space-y-4 shadow-xl">
+      <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+        <h2 className="text-sm font-bold tracking-wider text-rose-400 uppercase">
+          Colar Feedback Manual
+        </h2>
+        <span className="text-xs text-zinc-500">Modo Local Ativo</span>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <textarea
-            value={rawText}
-            onChange={(e) => {
-              setRawText(e.target.value);
-              if (errorMessage) setErrorMessage(null);
-            }}
-            maxLength={MAX_CHARS}
-            rows={6}
-            placeholder="Ex: O jogo está incrível, mas o terceiro chefe tem um pico de dificuldade injusto e a interface trava no mobile..."
-            className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#800638] focus:border-transparent text-gray-800 text-sm resize-none transition-all"
+          <label className="block text-xs font-semibold text-zinc-300 mb-1">Título do Jogo</label>
+          <input
+            type="text"
+            value={gameTitle}
+            onChange={(e) => setGameTitle(e.target.value)}
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-rose-600"
           />
-          <div className="flex justify-between items-center mt-1 text-xs text-gray-400">
-            <span>{errorMessage ? <span className="text-[#800638] font-medium">{errorMessage}</span> : "Mínimo de 20 caracteres"}</span>
-            <span>{rawText.length} / {MAX_CHARS}</span>
-          </div>
         </div>
+
+        <div>
+          <label className="block text-xs font-semibold text-zinc-300 mb-1">Feedback / Descrição da Comunidade</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={3}
+            placeholder="Cole aqui os comentários da Steam, Itch.io ou redes sociais..."
+            className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-rose-600 resize-none"
+          />
+        </div>
+
+        {errorMsg && (
+          <p className="text-xs text-rose-400">{errorMsg}</p>
+        )}
 
         <button
           type="submit"
-          disabled={isLoading || rawText.trim().length < MIN_CHARS}
-          className="w-full py-3 px-6 rounded-xl bg-[#800638] hover:bg-[#68042c] text-white font-semibold shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+          disabled={isLoading}
+          className="w-full bg-rose-600 hover:bg-rose-500 text-white font-semibold py-2.5 rounded-xl transition disabled:opacity-50 text-sm shadow-lg shadow-rose-950/50"
         >
-          {isLoading ? (
-            <>
-              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>Processando Inteligência...</span>
-            </>
-          ) : (
-            <span>Gerar Diagnóstico Lore Master</span>
-          )}
+          {isLoading ? "Processando Análise..." : "Gerar Diagnóstico (-10 Créditos)"}
         </button>
       </form>
     </div>
