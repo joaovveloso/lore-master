@@ -393,4 +393,203 @@ export default function HomePage() {
                     </div>
                   ) : (
                     <div className="text-center py-12 bg-[#F7F8FA] rounded-xl border border-dashed border-gray-200">
-                      <p className="text-sm font-semibold text-gray-700">Nen
+                      <p className="text-sm font-semibold text-gray-700">Nenhum problema grave registrado na sessão atual.</p>
+                      <p className="text-xs text-gray-500 mt-1">Execute um diagnóstico na aba de Visão Geral ou cole feedback manual para popular esta lista com gráficos analíticos.</p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {activeSection === "overview" && (
+              <>
+                {/* Biblioteca & Seletor de Jogos Local */}
+                <section
+                  aria-labelledby="game-heading"
+                  className="mb-6 rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-6"
+                >
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-gray-100 pb-4 mb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-[#800638]/10 text-[#800638]">
+                        <Gamepad2 size={28} />
+                      </div>
+
+                      <div className="min-w-0">
+                        <span className="inline-block rounded-md bg-[#800638]/10 px-2 py-0.5 text-xs font-semibold text-[#800638]">
+                          ID do Projeto: {currentGame.appId}
+                        </span>
+
+                        <h2 id="game-heading" className="mt-1 break-words text-xl font-bold text-[#252832]">
+                          {currentGame.title}
+                        </h2>
+
+                        <p className="mt-0.5 text-xs text-gray-500">
+                          Desenvolvido por <span className="font-medium text-[#252832]">{currentGame.developer}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setIsAddGameOpen(true)}
+                      className="inline-flex items-center gap-2 rounded-xl bg-[#800638] px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-[#800638]/20 transition hover:bg-[#60042a]"
+                    >
+                      <Plus size={16} />
+                      <span>Adicionar Novo Jogo</span>
+                    </button>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 mb-2.5 uppercase tracking-wider">
+                      Selecione um jogo da sua biblioteca para analisar:
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {gamesList.map((game) => (
+                        <button
+                          key={game.appId}
+                          type="button"
+                          onClick={() => setSelectedGame(game)}
+                          className={`rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
+                            currentGame.appId === game.appId
+                              ? "bg-[#800638] text-white shadow-md shadow-[#800638]/20"
+                              : "border border-[#E5E7EB] bg-white text-gray-700 hover:bg-[#F7F8FA] hover:border-gray-300"
+                          }`}
+                        >
+                          🎮 {game.title}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+
+                {/* Métricas */}
+                <section aria-labelledby="metrics-heading">
+                  <div className="mb-4">
+                    <h2 id="metrics-heading" className="text-lg font-semibold text-[#252832]">
+                      Indicadores da análise
+                    </h2>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Visão resumida dos dados e problemas identificados.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                    {metrics.map((metric) => {
+                      const Icon = metric.icon;
+                      return (
+                        <article
+                          key={metric.label}
+                          className="min-w-0 rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm transition-all hover:border-[#800638]/30 hover:shadow-md"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <p className="text-sm font-medium text-gray-600">
+                              {metric.label}
+                            </p>
+                            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#800638]/10 text-[#800638]">
+                              <Icon size={18} />
+                            </span>
+                          </div>
+
+                          <p className="mt-4 text-3xl font-bold tabular-nums text-[#252832]">
+                            {metric.value}
+                          </p>
+
+                          <p className="mt-2 text-xs leading-5 text-gray-500">
+                            {metric.description}
+                          </p>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </section>
+
+                {/* Banner de Diagnóstico */}
+                <section
+                  aria-labelledby="analysis-heading"
+                  className="mt-6 rounded-2xl border border-[#800638]/20 bg-gradient-to-br from-[#800638] to-[#A51F4B] p-6 text-white shadow-xl sm:p-8"
+                >
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="space-y-2">
+                      <div className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                        <Sparkles size={14} />
+                        <span>Motor Analítico Local</span>
+                      </div>
+                      <h2 id="analysis-heading" className="text-xl font-bold">
+                        Pronto para executar o diagnóstico de {currentGame.title}?
+                      </h2>
+                      <p className="max-w-xl text-sm text-white/90">
+                        O motor irá processar os dados para extrair gargalos e recomendações acionáveis.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveSection("diagnosis")}
+                      className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-bold text-[#800638] shadow-lg transition-all hover:bg-gray-50 hover:shadow-xl active:scale-95"
+                    >
+                      <span>Ir para Diagnóstico</span>
+                      <ArrowRight size={17} />
+                    </button>
+                  </div>
+                </section>
+              </>
+            )}
+
+            {/* Renderização da Seção de Diagnóstico */}
+            {activeSection === "diagnosis" && (
+              <section className="space-y-6">
+                <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-gray-100">
+                    <div>
+                      <h2 className="text-xl font-bold text-[#252832]">Motor Preditivo Lore Master</h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Dispare o diagnóstico em tempo real para {currentGame.title}.
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setActiveSection("ingestion")}
+                        className="rounded-xl border border-gray-200 px-4 py-3 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                      >
+                        Usar Texto Customizado
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRunAnalysisWithText(`Jogo desenvolvido por ${currentGame.developer}. AppID: ${currentGame.appId}. Análise geral de performance e engajamento.`)}
+                        disabled={isLoading}
+                        className="flex items-center justify-center gap-2 rounded-xl bg-[#800638] px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-[#800638]/20 transition-all hover:bg-[#60042a] disabled:opacity-50"
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 size={18} className="animate-spin" />
+                            <span>Processando Análise...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles size={18} />
+                            <span>Executar Diagnóstico (-10 Créditos)</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Grid de Métricas */}
+                  <div className="mt-6">
+                    <MetricsGrid analysis={analysis} isLoading={isLoading} />
+                  </div>
+                </div>
+              </section>
+            )}
+          </div>
+        </main>
+      </div>
+
+      {/* Modais de Suporte */}
+      <CreditShopModal isOpen={isShopOpen} onClose={() => setIsShopOpen(false)} />
+      <AddGameModal isOpen={isAddGameOpen} onClose={() => setIsAddGameOpen(false)} onAddGame={handleAddGame} />
+    </div>
+  );
+}
