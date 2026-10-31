@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+ import { NextRequest, NextResponse } from 'next/server';
 import { runGeminiAnalysis } from '@/services/geminiService';
 import { AnalyzeRequestBody, AnalysisResponse, Bottleneck, Recommendation } from '@/types/analysis';
 import { sanitizeInputText } from '@/utils/sanitizer';
@@ -25,7 +25,7 @@ function createContextualFallback(gameTitle: string, description: string): Analy
     recommendations.push({
       action: 'Otimização de rotinas de renderização e correção de memory leaks.',
       expectedOutcome: 'Estabilização do FPS e redução dos travamentos em hardware intermediário.',
-      priority: 'Alta',
+      priority: 'High',
     });
   }
 
@@ -38,7 +38,7 @@ function createContextualFallback(gameTitle: string, description: string): Analy
     recommendations.push({
       action: 'Ajustar balanceamento de encontros e distribuição de checkpoints.',
       expectedOutcome: 'Aumento na taxa de retenção de jogadores em fases avançadas.',
-      priority: 'Média',
+      priority: 'Medium',
     });
   }
 
@@ -51,7 +51,7 @@ function createContextualFallback(gameTitle: string, description: string): Analy
     recommendations.push({
       action: 'Reavaliar precificação de itens cosméticos e valor percebido.',
       expectedOutcome: 'Aumento na conversão da loja e satisfação dos jogadores.',
-      priority: 'Média',
+      priority: 'Medium',
     });
   }
 
@@ -64,7 +64,7 @@ function createContextualFallback(gameTitle: string, description: string): Analy
     recommendations.push({
       action: 'Refinar balanceamento geral e escutar sugestões recorrentes nos fóruns.',
       expectedOutcome: 'Melhoria na satisfação geral do público e retenção.',
-      priority: 'Média',
+      priority: 'Medium',
     });
   }
 
