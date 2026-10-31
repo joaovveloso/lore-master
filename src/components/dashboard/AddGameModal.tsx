@@ -35,6 +35,7 @@ export default function AddGameModal({ isOpen, onClose, onAddGame }: AddGameModa
       metrics: {
         currentPlayers: Math.floor(10 + Math.random() * 80),
         peakPlayers24h: Math.floor(30 + Math.random() * 250),
+        estimatedOwners: "0 - 20,000", // Propriedade obrigatória exigida pela interface
       },
     };
 
@@ -92,7 +93,7 @@ export default function AddGameModal({ isOpen, onClose, onAddGame }: AddGameModa
             type="submit"
             className="w-full bg-[#800638] hover:bg-[#60042a] text-white font-bold py-3 rounded-xl transition text-sm shadow-md flex items-center justify-center gap-2"
           >
-            <Plus size={18} />
+            <Plus size= {18} />
             <span>Salvar na Biblioteca Local</span>
           </button>
         </form>
