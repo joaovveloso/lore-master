@@ -44,12 +44,16 @@ export async function fetchSteamDataByAppId(appId: number): Promise<FormattedSte
       ? Math.round((positiveReviewsCount / rawReviews.length) * 100) 
       : 0;
 
-    // Concatenação e higienizador das avaliações via Sanitizer do Dev 8
+    // Concatenação dos reviews brutos
     const rawCombinedText = rawReviews
       .map((r) => r.review)
       .join("\n---\n");
 
-    const sanitizedText = sanitizeInputText(rawCombinedText);
+    // Tratativa segura para extrair o texto string do SanitizerResult (ou fallback para string direta)
+    const sanitizerResult = sanitizeInputText(rawCombinedText);
+    const sanitizedText = typeof sanitizerResult === "string" 
+      ? sanitizerResult 
+      : (sanitizerResult as any).sanitizedText || (sanitizerResult as any).text || rawCombinedText;
 
     return {
       appId: appInfo.steam_appid,
@@ -79,6 +83,11 @@ function getFallbackMockSteamData(appId: number): FormattedSteamData {
     .map((b) => `[${b.category.toUpperCase()}] ${b.issue}: Impacto ${b.impact}`)
     .join("\n");
 
+  const sanitizerResult = sanitizeInputText(mockText);
+  const sanitizedText = typeof sanitizerResult === "string" 
+    ? sanitizerResult 
+    : (sanitizerResult as any).sanitizedText || (sanitizerResult as any).text || mockText;
+
   return {
     appId: mockProfile.appId,
     gameTitle: mockProfile.title,
@@ -87,7 +96,7 @@ function getFallbackMockSteamData(appId: number): FormattedSteamData {
     genres: ["Indie", "Ação"],
     totalReviewsAnalyzed: mockProfile.steamRating.totalReviews,
     positivePercentage: mockProfile.mockAnalysis.healthScore,
-    aggregatedReviewsText: sanitizeInputText(mockText),
+    aggregatedReviewsText: sanitizedText,
     isMockFallback: true,
   };
 }
