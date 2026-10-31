@@ -47,7 +47,8 @@ export default function HomePage() {
     error: contextError 
   } = useGame();
 
-  const [activeSection, setActiveSection] = useState<SectionId | "ingestion">("overview");
+  // Tipagem sincronizada aceitando SectionId, "ingestion" e "feedback"
+  const [activeSection, setActiveSection] = useState<SectionId | "ingestion" | "feedback">("overview");
   const [localError, setLocalError] = useState<string | null>(null);
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isAddGameOpen, setIsAddGameOpen] = useState(false);
@@ -147,7 +148,7 @@ export default function HomePage() {
       <div className="flex min-h-[calc(100vh-4rem)] flex-col md:flex-row">
         <Sidebar
           active={activeSection === "ingestion" ? "overview" : activeSection}
-          onSelect={(sec) => setActiveSection(sec as SectionId | "ingestion")}
+          onSelect={(sec) => setActiveSection(sec as SectionId | "ingestion" | "feedback")}
           className="md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:w-[268px] md:self-start md:overflow-y-auto"
         />
 
