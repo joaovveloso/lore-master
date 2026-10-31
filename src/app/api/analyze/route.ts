@@ -39,8 +39,10 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 4. Fallback de Resiliência: Retorna análise estruturada baseada no Mock Data (Dev 8)
-    const appId = body.steamData?.appId ?? 1001;
+    // 4. Fallback de Resiliência: Extração segura do appId numérico
+    const rawAppId = (body.steamData as any)?.appId;
+    const appId = typeof rawAppId === 'number' ? rawAppId : Number(rawAppId) || 1001;
+
     const fallbackProfile = getMockGameFallback(appId);
     
     // Constrói resposta no formato esperado pela UI
