@@ -13,6 +13,9 @@ import {
   AlertCircle,
   FileText,
   Plus,
+  ShieldAlert,
+  AlertTriangle,
+  CheckCircle2,
 } from "lucide-react";
 
 import Header from "@/components/Header";
@@ -47,7 +50,7 @@ export default function HomePage() {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isAddGameOpen, setIsAddGameOpen] = useState(false);
 
-  // Estado local da biblioteca de jogos do usuário (permite adicionar novos)
+  // Estado local da biblioteca de jogos do usuário
   const [gamesList, setGamesList] = useState<GameData[]>(mockGames);
 
   const section = activeSection === "ingestion" 
@@ -58,7 +61,7 @@ export default function HomePage() {
 
   const handleAddGame = (newGame: GameData) => {
     setGamesList((prev) => [newGame, ...prev]);
-    setSelectedGame(newGame); // Seleciona automaticamente o jogo recém-criado
+    setSelectedGame(newGame);
   };
 
   const handleRunAnalysisWithText = (textToAnalyze: string) => {
@@ -181,7 +184,6 @@ export default function HomePage() {
                     Cole comentários brutos de Discord, Reddit ou pesquisas para submetê-los ao motor de análise local (-10 créditos).
                   </p>
                 </div>
-
                 <CustomTextForm />
               </section>
             )}
@@ -230,195 +232,165 @@ export default function HomePage() {
               </section>
             )}
 
-            {activeSection === "overview" && (
-              <>
-                {/* Biblioteca & Seletor de Jogos Local */}
-                <section
-                  aria-labelledby="game-heading"
-                  className="mb-6 rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-6"
-                >
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-gray-100 pb-4 mb-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-[#800638]/10 text-[#800638]">
-                        <Gamepad2 size={28} />
-                      </div>
-
-                      <div className="min-w-0">
-                        <span className="inline-block rounded-md bg-[#800638]/10 px-2 py-0.5 text-xs font-semibold text-[#800638]">
-                          ID do Projeto: {currentGame.appId}
-                        </span>
-
-                        <h2 id="game-heading" className="mt-1 break-words text-xl font-bold text-[#252832]">
-                          {currentGame.title}
-                        </h2>
-
-                        <p className="mt-0.5 text-xs text-gray-500">
-                          Desenvolvido por <span className="font-medium text-[#252832]">{currentGame.developer}</span>
-                        </p>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => setIsAddGameOpen(true)}
-                      className="inline-flex items-center gap-2 rounded-xl bg-[#800638] px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-[#800638]/20 transition hover:bg-[#60042a]"
-                    >
-                      <Plus size={16} />
-                      <span>Adicionar Novo Jogo</span>
-                    </button>
-                  </div>
-
-                  <div>
-                    <p className="text-xs font-semibold text-gray-500 mb-2.5 uppercase tracking-wider">
-                      Selecione um jogo da sua biblioteca para analisar:
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {gamesList.map((game) => (
-                        <button
-                          key={game.appId}
-                          type="button"
-                          onClick={() => setSelectedGame(game)}
-                          className={`rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
-                            currentGame.appId === game.appId
-                              ? "bg-[#800638] text-white shadow-md shadow-[#800638]/20"
-                              : "border border-[#E5E7EB] bg-white text-gray-700 hover:bg-[#F7F8FA] hover:border-gray-300"
-                          }`}
-                        >
-                          🎮 {game.title}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </section>
-
-                {/* Métricas */}
-                <section aria-labelledby="metrics-heading">
-                  <div className="mb-4">
-                    <h2 id="metrics-heading" className="text-lg font-semibold text-[#252832]">
-                      Indicadores da análise
-                    </h2>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Visão resumida dos dados e problemas identificados.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    {metrics.map((metric) => {
-                      const Icon = metric.icon;
-                      return (
-                        <article
-                          key={metric.label}
-                          className="min-w-0 rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm transition-all hover:border-[#800638]/30 hover:shadow-md"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <p className="text-sm font-medium text-gray-600">
-                              {metric.label}
-                            </p>
-                            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#800638]/10 text-[#800638]">
-                              <Icon size={18} />
-                            </span>
-                          </div>
-
-                          <p className="mt-4 text-3xl font-bold tabular-nums text-[#252832]">
-                            {metric.value}
-                          </p>
-
-                          <p className="mt-2 text-xs leading-5 text-gray-500">
-                            {metric.description}
-                          </p>
-                        </article>
-                      );
-                    })}
-                  </div>
-                </section>
-
-                {/* Banner de Diagnóstico */}
-                <section
-                  aria-labelledby="analysis-heading"
-                  className="mt-6 rounded-2xl border border-[#800638]/20 bg-gradient-to-br from-[#800638] to-[#A51F4B] p-6 text-white shadow-xl sm:p-8"
-                >
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="space-y-2">
-                      <div className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                        <Sparkles size={14} />
-                        <span>Motor Analítico Local</span>
-                      </div>
-                      <h2 id="analysis-heading" className="text-xl font-bold">
-                        Pronto para executar o diagnóstico de {currentGame.title}?
-                      </h2>
-                      <p className="max-w-xl text-sm text-white/90">
-                        O motor irá processar os dados para extrair gargalos e recomendações acionáveis.
-                      </p>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => setActiveSection("diagnosis")}
-                      className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-bold text-[#800638] shadow-lg transition-all hover:bg-gray-50 hover:shadow-xl active:scale-95"
-                    >
-                      <span>Ir para Diagnóstico</span>
-                      <ArrowRight size={17} />
-                    </button>
-                  </div>
-                </section>
-              </>
-            )}
-
-            {/* Renderização da Seção de Diagnóstico */}
-            {activeSection === "diagnosis" && (
+            {/* SEÇÃO: BENCHMARKING */}
+            {activeSection === "benchmarking" && (
               <section className="space-y-6">
-                <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-gray-100">
-                    <div>
-                      <h2 className="text-xl font-bold text-[#252832]">Motor Preditivo Lore Master</h2>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Dispare o diagnóstico em tempo real para {currentGame.title}.
+                <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
+                  <div className="border-b border-gray-100 pb-4">
+                    <h2 className="text-xl font-bold text-[#252832]">Benchmarking & Competitividade Indie</h2>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Comparativo de performance de <span className="font-semibold text-[#252832]">{currentGame.title}</span> com a média do ecossistema de jogos independentes.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-2">
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Health Score do Projeto</p>
+                      <p className="text-3xl font-extrabold text-[#800638]">
+                        {analysis ? `${analysis.overallScore} / 100` : "82 / 100"}
                       </p>
+                      <p className="text-xs text-emerald-600 font-medium">▲ Acima da média do gênero Indie (71)</p>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setActiveSection("ingestion")}
-                        className="rounded-xl border border-gray-200 px-4 py-3 text-xs font-semibold text-gray-700 hover:bg-gray-50"
-                      >
-                        Usar Texto Customizado
-                      </button>
+                    <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-2">
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Taxa de Retenção Estimada</p>
+                      <p className="text-3xl font-extrabold text-[#252832]">
+                        {analysis ? `${(analysis.predictedSuccessRate * 100).toFixed(0)}%` : "78%"}
+                      </p>
+                      <p className="text-xs text-gray-400">Baseado em engajamento de sessões curtas</p>
+                    </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleRunAnalysisWithText(`Jogo desenvolvido por ${currentGame.developer}. AppID: ${currentGame.appId}. Análise geral de performance e engajamento.`)}
-                        disabled={isLoading}
-                        className="flex items-center justify-center gap-2 rounded-xl bg-[#800638] px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-[#800638]/20 transition-all hover:bg-[#60042a] disabled:opacity-50"
-                      >
-                        {isLoading ? (
-                          <>
-                            <Loader2 size={18} className="animate-spin" />
-                            <span>Processando Análise...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles size={18} />
-                            <span>Executar Diagnóstico (-10 Créditos)</span>
-                          </>
-                        )}
-                      </button>
+                    <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-2">
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Posicionamento de Mercado</p>
+                      <p className="text-xl font-bold text-[#252832] pt-1">Tier 1 (Alto Potencial)</p>
+                      <p className="text-xs text-gray-400">Pronto para campanhas em redes sociais</p>
                     </div>
                   </div>
 
-                  {/* Grid de Métricas */}
-                  <div className="mt-6">
-                    <MetricsGrid analysis={analysis} isLoading={isLoading} />
+                  <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
+                    <h3 className="font-bold text-sm text-[#252832]">Métricas Comparativas de Conversão</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                          <span>{currentGame.title} (Seu Jogo)</span>
+                          <span className="text-[#800638]">85%</span>
+                        </div>
+                        <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-[#800638] rounded-full" style={{ width: "85%" }} />
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                          <span>Média do Mercado Indie (Itch.io)</span>
+                          <span>62%</span>
+                        </div>
+                        <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-gray-400 rounded-full" style={{ width: "62%" }} />
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                          <span>Projetos em Early Access / Protótipos</span>
+                          <span>45%</span>
+                        </div>
+                        <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                          <div className="h-full bg-gray-300 rounded-full" style={{ width: "45%" }} />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </section>
             )}
-          </div>
-        </main>
-      </div>
 
-      {/* Modais de Suporte */}
-      <CreditShopModal isOpen={isShopOpen} onClose={() => setIsShopOpen(false)} />
-      <AddGameModal isOpen={isAddGameOpen} onClose={() => setIsAddGameOpen(false)} onAddGame={handleAddGame} />
-    </div>
-  );
-}
+            {/* SEÇÃO: PROBLEMAS RECORRENTES (COM GRÁFICOS VISUAIS) */}
+            {activeSection === "issues" && (
+              <section className="space-y-6">
+                <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
+                  <div className="border-b border-gray-100 pb-4">
+                    <h2 className="text-xl font-bold text-[#252832]">Problemas Recorrentes & Gargalos</h2>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Painel analítico com gráficos de distribuição de falhas extraídas do feedback para <span className="font-semibold text-[#252832]">{currentGame.title}</span>.
+                    </p>
+                  </div>
+
+                  {analysis && analysis.issues.length > 0 ? (
+                    <div className="space-y-6">
+                      {/* Gráfico de Barras de Distribuição de Severidade */}
+                      <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-4">
+                        <h3 className="font-bold text-xs text-gray-500 uppercase tracking-wider">Distribuição de Gravidade dos Gargalos</h3>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <ShieldAlert size={18} className="text-rose-600" />
+                              <span className="text-xs font-bold text-gray-700">Críticos</span>
+                            </div>
+                            <span className="text-lg font-black text-rose-600">
+                              {analysis.issues.filter(i => i.severity === "critical").length}
+                            </span>
+                          </div>
+
+                          <div className="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <AlertTriangle size={18} className="text-amber-600" />
+                              <span className="text-xs font-bold text-gray-700">Alta Severidade</span>
+                            </div>
+                            <span className="text-lg font-black text-amber-600">
+                              {analysis.issues.filter(i => i.severity === "high").length}
+                            </span>
+                          </div>
+
+                          <div className="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 size={18} className="text-blue-600" />
+                              <span className="text-xs font-bold text-gray-700">Média / Ajuste</span>
+                            </div>
+                            <span className="text-lg font-black text-blue-600">
+                              {analysis.issues.filter(i => i.severity === "medium").length}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Lista Detalhada de Gargalos */}
+                      <div className="space-y-4">
+                        <h3 className="font-bold text-sm text-[#252832]">Detalhamento Técnico das Ocorrências</h3>
+                        {analysis.issues.map((issue) => (
+                          <div key={issue.id} className="rounded-xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-bold text-sm text-[#252832]">{issue.title}</h4>
+                              <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase ${
+                                issue.severity === "critical" ? "bg-rose-100 text-rose-700" :
+                                issue.severity === "high" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"
+                              }`}>
+                                {issue.severity}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-600">{issue.description}</p>
+                            
+                            {/* Barra visual de impacto simulada */}
+                            <div className="space-y-1 pt-1">
+                              <div className="flex justify-between text-[10px] text-gray-400 font-medium">
+                                <span>Impacto na Retenção</span>
+                                <span>{issue.severity === "critical" ? "Alto (-18%)" : issue.severity === "high" ? "Médio (-10%)" : "Baixo (-4%)"}</span>
+                              </div>
+                              <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                                <div 
+                                  className={`h-full rounded-full ${issue.severity === "critical" ? "bg-rose-600 w-4/5" : issue.severity === "high" ? "bg-amber-500 w-2/4" : "bg-blue-500 w-1/4"}`} 
+                                />
+                              </div>
+                            </div>
+
+                            <div className="pt-2 border-t border-gray-100 text-xs text-[#800638] font-semibold">
+                              💡 Correção recomendada: {issue.recommendation}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 bg-[#F7F8FA] rounded-xl border border-dashed border-gray-200">
+                      <p className="text-sm font-semibold text-gray-700">Nen
