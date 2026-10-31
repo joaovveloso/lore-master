@@ -2,7 +2,7 @@
 
 import React from "react";
 import type { AnalysisResponse } from "@/types";
-import LoadingSkeletons from "./LoadingSkeletons";
+import LoadingSkeletons from "@/components/ui/LoadingSkeletons";
 import { AlertTriangle, CheckCircle2, ShieldAlert, Sparkles } from "lucide-react";
 
 interface MetricsGridProps {
