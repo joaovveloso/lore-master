@@ -16,6 +16,8 @@ import {
   ShieldAlert,
   AlertTriangle,
   CheckCircle2,
+  Zap,
+  TrendingUp,
 } from "lucide-react";
 
 import Header from "@/components/Header";
@@ -50,6 +52,11 @@ export default function HomePage() {
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isAddGameOpen, setIsAddGameOpen] = useState(false);
 
+  // Estado para o Benchmarking de Concorrentes
+  const [selectedRival, setSelectedRival] = useState<GameData | null>(null);
+  const [isBenchmarking, setIsBenchmarking] = useState(false);
+  const [benchmarkDone, setBenchmarkDone] = useState(false);
+
   // Estado local da biblioteca de jogos do usuário
   const [gamesList, setGamesList] = useState<GameData[]>(mockGames);
 
@@ -58,6 +65,7 @@ export default function HomePage() {
     : getSection(activeSection as SectionId);
     
   const currentGame = selectedGame ?? gamesList[0];
+  const rivalGame = selectedRival ?? gamesList.find(g => g.appId !== currentGame.appId) ?? gamesList[0];
 
   const handleAddGame = (newGame: GameData) => {
     setGamesList((prev) => [newGame, ...prev]);
@@ -82,6 +90,29 @@ export default function HomePage() {
     setActiveSection("diagnosis");
   };
 
+  // Função para executar o Benchmarking de Concorrente (-5 créditos)
+  const handleRunBenchmarking = () => {
+    setLocalError(null);
+
+    if (!hasEnoughCredits(5)) {
+      setLocalError("Créditos insuficientes! Você precisa de pelo menos 5 créditos para realizar o benchmarking.");
+      return;
+    }
+
+    const success = deductCredits(5);
+    if (!success) {
+      setLocalError("Não foi possível deduzir os créditos.");
+      return;
+    }
+
+    setIsBenchmarking(true);
+    setTimeout(() => {
+      setIsBenchmarking(false);
+      setBenchmarkDone(true);
+    }, 1000);
+  };
+
+  // Cards em Português Perfeito
   const metrics = [
     {
       label: "Avaliações analisadas",
@@ -91,8 +122,8 @@ export default function HomePage() {
     },
     {
       label: "Avaliação Geral",
-      value: currentGame.steamRating ? currentGame.steamRating.scoreDescription : "—",
-      description: `${currentGame.steamRating?.positiveReviews.toLocaleString() ?? 0} positivas`,
+      value: currentGame.steamRating ? (currentGame.steamRating.scoreDescription === "Very Positive" ? "Extremamente Positiva" : currentGame.steamRating.scoreDescription) : "—",
+      description: `${currentGame.steamRating?.positiveReviews.toLocaleString() ?? 0} avaliações positivas`,
       icon: Star,
     },
     {
@@ -104,7 +135,7 @@ export default function HomePage() {
     {
       label: "Diagnóstico por IA",
       value: analysis ? `${analysis.overallScore}/100` : "Pronto",
-      description: analysis ? "Análise concluída" : "Motor Local Ativo",
+      description: analysis ? "Análise concluída com sucesso" : "Motor Local Ativo",
       icon: Sparkles,
     },
   ];
@@ -232,75 +263,203 @@ export default function HomePage() {
               </section>
             )}
 
-            {/* SEÇÃO: BENCHMARK */}
+            {/* SEÇÃO: BENCHMARKING DE CONCORRENTE (-5 CRÉDITOS) */}
             {activeSection === "benchmark" && (
               <section className="space-y-6">
                 <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-gray-100">
+                    <div>
+                      <h2 className="text-xl font-bold text-[#252832]">Benchmarking de Concorrente</h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Compare o seu projeto (<span className="font-bold text-[#800638]">{currentGame.title}</span>) lado a lado com um jogo rival do mercado.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleRunBenchmarking}
+                      disabled={isBenchmarking}
+                      className="flex items-center justify-center gap-2 rounded-xl bg-[#800638] px-5 py-3 text-xs font-bold text-white shadow-md shadow-[#800638]/20 transition-all hover:bg-[#60042a] disabled:opacity-50"
+                    >
+                      {isBenchmarking ? (
+                        <>
+                          <Loader2 size={16} className="animate-spin" />
+                          <span>Processando Comparativo...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Zap size={16} />
+                          <span>Comparar com Rival (-5 Créditos)</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Seletor de Rival */}
+                  <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-3">
+                    <p className="text-xs font-semibold text-gray-700 uppercase">Selecione o Jogo Rival para Comparação:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {gamesList.filter(g => g.appId !== currentGame.appId).map((rival) => (
+                        <button
+                          key={rival.appId}
+                          type="button"
+                          onClick={() => { setSelectedRival(rival); setBenchmarkDone(false); }}
+                          className={`rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
+                            rivalGame.appId === rival.appId
+                              ? "bg-[#252832] text-white shadow-sm"
+                              : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-100"
+                          }`}
+                        >
+                          ⚔️ {rival.title}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Resultado do Benchmarking */}
+                  {benchmarkDone ? (
+                    <div className="space-y-6 pt-4 animate-in fade-in duration-300">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Seu Jogo */}
+                        <div className="rounded-xl border-2 border-[#800638]/30 bg-white p-6 space-y-4 shadow-sm">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs font-bold uppercase text-[#800638] bg-[#800638]/10 px-2.5 py-1 rounded-md">Seu Jogo</span>
+                            <span className="text-lg font-black text-[#252832]">{currentGame.title}</span>
+                          </div>
+                          <div className="space-y-3 pt-2 text-xs text-gray-600">
+                            <div className="flex justify-between border-b pb-2">
+                              <span>Total de Avaliações:</span>
+                              <span className="font-bold text-[#252832]">{currentGame.steamRating?.totalReviews.toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2">
+                              <span>Pico de Jogadores:</span>
+                              <span className="font-bold text-[#252832]">{currentGame.metrics?.peakPlayers24h.toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2">
+                              <span>Retenção Preditiva:</span>
+                              <span className="font-bold text-emerald-600">{analysis ? `${(analysis.predictedSuccessRate * 100).toFixed(0)}%` : "82%"}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Jogo Rival */}
+                        <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-6 space-y-4 shadow-sm">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs font-bold uppercase text-gray-500 bg-gray-200 px-2.5 py-1 rounded-md">Concorrente</span>
+                            <span className="text-lg font-black text-[#252832]">{rivalGame.title}</span>
+                          </div>
+                          <div className="space-y-3 pt-2 text-xs text-gray-600">
+                            <div className="flex justify-between border-b pb-2">
+                              <span>Total de Avaliações:</span>
+                              <span className="font-bold text-[#252832]">{rivalGame.steamRating?.totalReviews.toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2">
+                              <span>Pico de Jogadores:</span>
+                              <span className="font-bold text-[#252832]">{rivalGame.metrics?.peakPlayers24h.toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2">
+                              <span>Retenção Estimada:</span>
+                              <span className="font-bold text-gray-700">74%</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl bg-[#800638]/5 border border-[#800638]/20 p-5 text-xs text-[#800638] space-y-1">
+                        <p className="font-bold text-sm">💡 Conclusão Analítica do Lore Master:</p>
+                        <p>O projeto <span className="font-bold">{currentGame.title}</span> demonstra excelente competitividade de engajamento frente a <span className="font-bold">{rivalGame.title}</span>, superando em métricas de conversão de jogadores ativos.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12 bg-[#F7F8FA] rounded-xl border border-dashed border-gray-200">
+                      <TrendingUp size={32} className="mx-auto text-gray-400 mb-2" />
+                      <p className="text-sm font-semibold text-gray-700">Nenhum comparativo executado nesta sessão.</p>
+                      <p className="text-xs text-gray-500 mt-1">Clique no botão acima para processar o benchmark contra o rival selecionado (-5 créditos).</p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {/* SEÇÃO: PROBLEMAS RECORRENTES (FEEDBACK) */}
+            {activeSection === "feedback" && (
+              <section className="space-y-6">
+                <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
                   <div className="border-b border-gray-100 pb-4">
-                    <h2 className="text-xl font-bold text-[#252832]">Benchmarking & Competitividade Indie</h2>
+                    <h2 className="text-xl font-bold text-[#252832]">Problemas Recorrentes & Gargalos</h2>
                     <p className="text-sm text-gray-500 mt-1">
-                      Comparativo de performance de <span className="font-semibold text-[#252832]">{currentGame.title}</span> com a média do ecossistema de jogos independentes.
+                      Painel analítico consolidado com o histórico de falhas e bugs extraídos do feedback para <span className="font-semibold text-[#252832]">{currentGame.title}</span>.
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-2">
-                      <p className="text-xs font-semibold text-gray-500 uppercase">Health Score do Projeto</p>
-                      <p className="text-3xl font-extrabold text-[#800638]">
-                        {analysis ? `${analysis.overallScore} / 100` : "82 / 100"}
-                      </p>
-                      <p className="text-xs text-emerald-600 font-medium">▲ Acima da média do gênero Indie (71)</p>
-                    </div>
+                  {analysis && analysis.issues.length > 0 ? (
+                    <div className="space-y-6">
+                      {/* Gráfico de Barras de Distribuição de Severidade */}
+                      <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-4">
+                        <h3 className="font-bold text-xs text-gray-500 uppercase tracking-wider">Distribuição de Gravidade dos Gargalos</h3>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <ShieldAlert size={18} className="text-rose-600" />
+                              <span className="text-xs font-bold text-gray-700">Críticos</span>
+                            </div>
+                            <span className="text-lg font-black text-rose-600">
+                              {analysis.issues.filter(i => i.severity === "critical").length}
+                            </span>
+                          </div>
 
-                    <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-2">
-                      <p className="text-xs font-semibold text-gray-500 uppercase">Taxa de Retenção Estimada</p>
-                      <p className="text-3xl font-extrabold text-[#252832]">
-                        {analysis ? `${(analysis.predictedSuccessRate * 100).toFixed(0)}%` : "78%"}
-                      </p>
-                      <p className="text-xs text-gray-400">Baseado em engajamento de sessões curtas</p>
-                    </div>
+                          <div className="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <AlertTriangle size={18} className="text-amber-600" />
+                              <span className="text-xs font-bold text-gray-700">Alta Severidade</span>
+                            </div>
+                            <span className="text-lg font-black text-amber-600">
+                              {analysis.issues.filter(i => i.severity === "high").length}
+                            </span>
+                          </div>
 
-                    <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-2">
-                      <p className="text-xs font-semibold text-gray-500 uppercase">Posicionamento de Mercado</p>
-                      <p className="text-xl font-bold text-[#252832] pt-1">Tier 1 (Alto Potencial)</p>
-                      <p className="text-xs text-gray-400">Pronto para campanhas em redes sociais</p>
-                    </div>
-                  </div>
-
-                  <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-4">
-                    <h3 className="font-bold text-sm text-[#252832]">Métricas Comparativas de Conversão</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
-                          <span>{currentGame.title} (Seu Jogo)</span>
-                          <span className="text-[#800638]">85%</span>
-                        </div>
-                        <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-[#800638] rounded-full" style={{ width: "85%" }} />
+                          <div className="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 size={18} className="text-blue-600" />
+                              <span className="text-xs font-bold text-gray-700">Média / Ajuste</span>
+                            </div>
+                            <span className="text-lg font-black text-blue-600">
+                              {analysis.issues.filter(i => i.severity === "medium").length}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
-                      <div>
-                        <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
-                          <span>Média do Mercado Indie (Itch.io)</span>
-                          <span>62%</span>
-                        </div>
-                        <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-gray-400 rounded-full" style={{ width: "62%" }} />
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
-                          <span>Projetos em Early Access / Protótipos</span>
-                          <span>45%</span>
-                        </div>
-                        <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-gray-300 rounded-full" style={{ width: "45%" }} />
-                        </div>
+                      {/* Lista Detalhada de Gargalos */}
+                      <div className="space-y-4">
+                        <h3 className="font-bold text-sm text-[#252832]">Detalhamento Técnico das Ocorrências</h3>
+                        {analysis.issues.map((issue) => (
+                          <div key={issue.id} className="rounded-xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-bold text-sm text-[#252832]">{issue.title}</h4>
+                              <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase ${
+                                issue.severity === "critical" ? "bg-rose-100 text-rose-700" :
+                                issue.severity === "high" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"
+                              }`}>
+                                {issue.severity}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-600">{issue.description}</p>
+                            
+                            <div className="pt-2 border-t border-gray-100 text-xs text-[#800638] font-semibold">
+                              💡 Correção recomendada: {issue.recommendation}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="text-center py-12 bg-[#F7F8FA] rounded-xl border border-dashed border-gray-200">
+                      <p className="text-sm font-semibold text-gray-700">Nenhum problema grave registrado na sessão atual.</p>
+                      <p className="text-xs text-gray-500 mt-1">Execute um diagnóstico na aba de Visão Geral ou cole feedback manual para popular esta lista.</p>
+                    </div>
+                  )}
                 </div>
               </section>
             )}
@@ -365,7 +524,7 @@ export default function HomePage() {
                   </div>
                 </section>
 
-                {/* Métricas */}
+                {/* Métricas em Português */}
                 <section aria-labelledby="metrics-heading">
                   <div className="mb-4">
                     <h2 id="metrics-heading" className="text-lg font-semibold text-[#252832]">
@@ -438,15 +597,15 @@ export default function HomePage() {
               </>
             )}
 
-            {/* Renderização da Seção de Diagnóstico com Gráficos Analíticos de Severidade */}
+            {/* Renderização da Seção de Diagnóstico */}
             {activeSection === "diagnosis" && (
               <section className="space-y-6">
-                <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
+                <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-gray-100">
                     <div>
-                      <h2 className="text-xl font-bold text-[#252832]">Motor Preditivo & Painel de Gargalos</h2>
+                      <h2 className="text-xl font-bold text-[#252832]">Motor Preditivo Lore Master</h2>
                       <p className="text-sm text-gray-500 mt-1">
-                        Diagnóstico em tempo real e distribuição de severidade para {currentGame.title}.
+                        Dispare o diagnóstico em tempo real para {currentGame.title}.
                       </p>
                     </div>
 
@@ -480,51 +639,10 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Grid de Métricas e Skeleton */}
-                  <div>
+                  {/* Grid de Métricas */}
+                  <div className="mt-6">
                     <MetricsGrid analysis={analysis} isLoading={isLoading} />
                   </div>
-
-                  {/* Painel Gráfico de Problemas Recorrentes / Severidade (Integrado ao Diagnóstico) */}
-                  {analysis && analysis.issues.length > 0 && (
-                    <div className="pt-6 border-t border-gray-100 space-y-6">
-                      <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-4">
-                        <h3 className="font-bold text-xs text-gray-500 uppercase tracking-wider">Distribuição de Gravidade dos Gargalos</h3>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div className="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <ShieldAlert size={18} className="text-rose-600" />
-                              <span className="text-xs font-bold text-gray-700">Críticos</span>
-                            </div>
-                            <span className="text-lg font-black text-rose-600">
-                              {analysis.issues.filter(i => i.severity === "critical").length}
-                            </span>
-                          </div>
-
-                          <div className="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <AlertTriangle size={18} className="text-amber-600" />
-                              <span className="text-xs font-bold text-gray-700">Alta Severidade</span>
-                            </div>
-                            <span className="text-lg font-black text-amber-600">
-                              {analysis.issues.filter(i => i.severity === "high").length}
-                            </span>
-                          </div>
-
-                          <div className="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <CheckCircle2 size={18} className="text-blue-600" />
-                              <span className="text-xs font-bold text-gray-700">Média / Ajuste</span>
-                            </div>
-                            <span className="text-lg font-black text-blue-600">
-                              {analysis.issues.filter(i => i.severity === "medium").length}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </section>
             )}
