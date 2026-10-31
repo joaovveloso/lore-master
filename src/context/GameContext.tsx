@@ -98,7 +98,7 @@ export function GameProvider({ children }: GameProviderProps) {
     setSelectedGame,
     credits,
     deductCredits,
-    hasEnoughCredits, // Exposto para o Dev 5
+    hasEnoughCredits,
     isLoading,
     error,
   };
