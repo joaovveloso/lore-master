@@ -45,7 +45,6 @@ export default function HomePage() {
     error: contextError 
   } = useGame();
 
-  // Tipagem sincronizada com o SectionId padrão do componente Sidebar
   const [activeSection, setActiveSection] = useState<SectionId | "ingestion">("overview");
   const [localError, setLocalError] = useState<string | null>(null);
   const [isShopOpen, setIsShopOpen] = useState(false);
@@ -306,8 +305,8 @@ export default function HomePage() {
               </section>
             )}
 
-            {/* SEÇÃO: PROBLEMAS RECORRENTES (COM GRÁFICOS VISUAIS) */}
-            {activeSection === "issues" && (
+            {/* SEÇÃO: PROBLEMAS RECORRENTES (FEEDBACK) COM GRÁFICOS VISUAIS */}
+            {activeSection === "feedback" && (
               <section className="space-y-6">
                 <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
                   <div className="border-b border-gray-100 pb-4">
