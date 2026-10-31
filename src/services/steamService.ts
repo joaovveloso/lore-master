@@ -1,4 +1,4 @@
-import { getMockAnalysisData } from "@/services/mockData";
+import { mockAnalysisData } from "@/services/mockData";
 import { sanitizeInputText } from "@/utils/sanitizer";
 import { FormattedSteamData, SteamAppDetailsRaw, SteamReviewRaw } from "@/types/steam";
 
@@ -73,10 +73,14 @@ export async function fetchSteamDataByAppId(appId: number): Promise<FormattedSte
  * Estruturação do fallback utilizando a base mockada segura (Dev 8)
  */
 function getFallbackMockSteamData(appId: number): FormattedSteamData {
-  const mockAnalysis = getMockAnalysisData();
-  const mockText = mockAnalysis.gargalosIdentificados
-    .map((g) => `[${g.categoria.toUpperCase()}] ${g.problema}: ${g.causa}`)
-    .join("\n");
+  // Trata caso mockAnalysisData seja objeto direto ou função
+  const mockAnalysis = typeof mockAnalysisData === "function" ? mockAnalysisData() : mockAnalysisData;
+  
+  const mockText = mockAnalysis?.gargalosIdentificados
+    ? mockAnalysis.gargalosIdentificados
+        .map((g: { categoria: string; problema: string; causa: string }) => `[${g.categoria.toUpperCase()}] ${g.problema}: ${g.causa}`)
+        .join("\n")
+    : "Feedback simulado de resiliência do sistema Lore Master.";
 
   return {
     appId: appId || 1086940,
@@ -85,7 +89,7 @@ function getFallbackMockSteamData(appId: number): FormattedSteamData {
     shortDescription: "Dados providos pelo fallback de resiliência corporativo do Lore Master.",
     genres: ["Indie", "Estratégia"],
     totalReviewsAnalyzed: 150,
-    positivePercentage: mockAnalysis.healthScore,
+    positivePercentage: mockAnalysis?.healthScore || 85,
     aggregatedReviewsText: sanitizeInputText(mockText),
     isMockFallback: true,
   };
