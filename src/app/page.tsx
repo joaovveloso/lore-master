@@ -69,7 +69,7 @@ export default function HomePage() {
   const currentGame = selectedGame ?? gamesList[0];
   const rivalGame = selectedRival ?? gamesList.find(g => g.appId !== currentGame.appId) ?? gamesList[0];
 
-  // Fallback analítico rico alinhado estritamente com o tipo GameIssue (incluindo category e impactScore)
+  // Fallback analítico rico alinhado estritamente com o tipo GameIssue
   const defaultAnalysis: AnalysisResponse = {
     analysisId: "LM-9824-PRO",
     timestamp: new Date().toISOString(),
@@ -81,7 +81,7 @@ export default function HomePage() {
         id: "issue-1",
         title: "Queda de Performance em Transições de Cenas (Stuttering)",
         severity: "critical",
-        category: "Performance",
+        category: "performance",
         impactScore: 9,
         description: "Múltiplos relatos de micro-travamentos ao carregar texturas pesadas em momentos de combate intenso.",
         recommendation: "Implementar pré-carregamento assíncrono (async asset preloading) nos shaders críticos."
@@ -90,7 +90,7 @@ export default function HomePage() {
         id: "issue-2",
         title: "Curva de Aprendizado Inicial Acentuada",
         severity: "high",
-        category: "Gameplay",
+        category: "gameplay",
         impactScore: 7,
         description: "Jogadores relatam confusão nos primeiros 15 minutos devido à falta de tutoriais visuais claros.",
         recommendation: "Adicionar dicas contextuais dinâmicas na interface durante o primeiro ato."
@@ -99,7 +99,7 @@ export default function HomePage() {
         id: "issue-3",
         title: "Dificuldade com Leitura de Fontes em Resoluções Menores",
         severity: "medium",
-        category: "UI/UX",
+        category: "marketing",
         impactScore: 4,
         description: "Textos de diálogos secundários ficam difíceis de ler no Steam Deck e telas menores.",
         recommendation: "Criar um seletor de escala de fonte nas configurações de acessibilidade."
