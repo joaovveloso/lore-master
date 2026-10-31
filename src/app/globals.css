@@ -207,3 +207,37 @@
     background: #969DA8;
   }
 }
+/* =========================================
+   ESTILOS DE IMPRESSÃO / PDF (Dev 3)
+   ========================================= */
+@media print {
+  body {
+    background-color: #FFFFFF !important;
+    color: var(--lm-text) !important;
+  }
+
+  /* Oculta navegação, botões e elementos interativos na impressão */
+  nav,
+  button,
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Adapta os cards para fundo branco limpo no papel */
+  .lm-card,
+  div[class*="bg-zinc-"],
+  div[class*="bg-"] {
+    background-color: #FFFFFF !important;
+    border-color: var(--lm-border) !important;
+    box-shadow: none !important;
+    color: var(--lm-text) !important;
+  }
+
+  /* Força a cor da marca nos destaques impressos */
+  .text-rose-500,
+  .text-rose-400 {
+    color: var(--lm-brand) !important;
+  }
+}
