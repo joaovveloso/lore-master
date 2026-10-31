@@ -69,18 +69,20 @@ export default function HomePage() {
   const currentGame = selectedGame ?? gamesList[0];
   const rivalGame = selectedRival ?? gamesList.find(g => g.appId !== currentGame.appId) ?? gamesList[0];
 
-  // Fallback analítico rico para garantir que a aba de problemas nunca fique vazia
+  // Fallback analítico rico alinhado estritamente com o tipo GameIssue (incluindo category e impactScore)
   const defaultAnalysis: AnalysisResponse = {
     analysisId: "LM-9824-PRO",
     timestamp: new Date().toISOString(),
     overallScore: 84,
     predictedSuccessRate: 0.88,
-    summary: "O motor local identificou forte engajamento na narrativa principal, porém com gargalos moderados na curva de aprendizado inicial e otimização de interface mobile/steam deck.",
+    summary: "O motor local identificou forte engajamento na narrativa principal, porém com gargalos moderados na curva de aprendizado inicial e otimização de interface.",
     issues: [
       {
         id: "issue-1",
         title: "Queda de Performance em Transições de Cenas (Stuttering)",
         severity: "critical",
+        category: "Performance",
+        impactScore: 9,
         description: "Múltiplos relatos de micro-travamentos ao carregar texturas pesadas em momentos de combate intenso.",
         recommendation: "Implementar pré-carregamento assíncrono (async asset preloading) nos shaders críticos."
       },
@@ -88,6 +90,8 @@ export default function HomePage() {
         id: "issue-2",
         title: "Curva de Aprendizado Inicial Acentuada",
         severity: "high",
+        category: "Gameplay",
+        impactScore: 7,
         description: "Jogadores relatam confusão nos primeiros 15 minutos devido à falta de tutoriais visuais claros.",
         recommendation: "Adicionar dicas contextuais dinâmicas na interface durante o primeiro ato."
       },
@@ -95,6 +99,8 @@ export default function HomePage() {
         id: "issue-3",
         title: "Dificuldade com Leitura de Fontes em Resoluções Menores",
         severity: "medium",
+        category: "UI/UX",
+        impactScore: 4,
         description: "Textos de diálogos secundários ficam difíceis de ler no Steam Deck e telas menores.",
         recommendation: "Criar um seletor de escala de fonte nas configurações de acessibilidade."
       }
@@ -417,7 +423,7 @@ export default function HomePage() {
               </section>
             )}
 
-            {/* SEÇÃO: PROBLEMAS RECORRENTES (FEEDBACK) - TOTALMENTE PREENCHIDA */}
+            {/* SEÇÃO: PROBLEMAS RECORRENTES (FEEDBACK) */}
             {activeSection === "feedback" && (
               <section className="space-y-6">
                 <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
