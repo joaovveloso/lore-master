@@ -11,7 +11,6 @@ import {
   ArrowRight,
   Loader2,
   AlertCircle,
-  CheckCircle2,
   FileText,
 } from "lucide-react";
 
@@ -25,6 +24,7 @@ import { mockGames } from "@/data/mockData";
 import CustomTextForm from "@/components/ingestion/CustomTextForm";
 import ExportPDFButton from "@/components/report/ExportPDFButton";
 import MetricsGrid from "@/components/dashboard/MetricsGrid";
+import CreditShopModal from "@/components/dashboard/CreditShopModal";
 
 export default function HomePage() {
   const { 
@@ -41,6 +41,7 @@ export default function HomePage() {
 
   const [activeSection, setActiveSection] = useState<SectionId | "ingestion">("overview");
   const [localError, setLocalError] = useState<string | null>(null);
+  const [isShopOpen, setIsShopOpen] = useState(false);
 
   const section = activeSection === "ingestion" 
     ? { label: "Ingestão Manual de Feedback" } 
@@ -108,7 +109,7 @@ export default function HomePage() {
         <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <div className="mx-auto w-full max-w-7xl">
             
-            {/* Cabeçalho da Seção com Créditos e Exportação */}
+            {/* Cabeçalho da Seção com Créditos, Recarga e Exportação */}
             <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-gray-500">
@@ -120,10 +121,16 @@ export default function HomePage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
-                {/* Créditos Disponíveis */}
+                {/* Contador de Créditos + Botão de Recarga Fictícia */}
                 <div className="bg-white border border-[#E5E7EB] px-3.5 py-2 rounded-xl text-xs font-semibold shadow-sm flex items-center gap-2">
                   <span className="text-gray-500 uppercase">Créditos:</span>
                   <span className="text-[#800638] font-extrabold text-sm">{credits.availableCredits}</span>
+                  <button
+                    onClick={() => setIsShopOpen(true)}
+                    className="ml-2 bg-[#800638] hover:bg-[#60042a] text-white px-2.5 py-1 rounded-lg text-[10px] font-bold transition shadow-sm"
+                  >
+                    + Comprar
+                  </button>
                 </div>
 
                 {/* Botão de Exportar PDF */}
@@ -294,7 +301,7 @@ export default function HomePage() {
               </>
             )}
 
-            {/* Renderização da Seção de Diagnóstico com os componentes visuais */}
+            {/* Renderização da Seção de Diagnóstico */}
             {activeSection === "diagnosis" && (
               <section className="space-y-6">
                 <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm">
@@ -336,7 +343,7 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Grid de Métricas Completo do Dev 5 */}
+                  {/* Grid de Métricas */}
                   <div className="mt-6">
                     <MetricsGrid analysis={analysis} isLoading={isLoading} />
                   </div>
@@ -361,6 +368,9 @@ export default function HomePage() {
           </div>
         </main>
       </div>
+
+      {/* Modal Sandbox de Compra de Créditos */}
+      <CreditShopModal isOpen={isShopOpen} onClose={() => setIsShopOpen(false)} />
     </div>
   );
 }
