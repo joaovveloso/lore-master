@@ -53,6 +53,7 @@ export interface GameContextType {
   setSelectedGame: (game: GameData | null) => void;
   credits: CreditAccount;
   deductCredits: (amount: number) => Promise<boolean>;
+  hasEnoughCredits: (cost: number) => boolean; // 👈 Adicionado para o Dev 5 e Dev 7
   isLoading: boolean;
   error: string | null;
 }
