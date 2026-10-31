@@ -26,6 +26,8 @@ export default function AddGameModal({ isOpen, onClose, onAddGame }: AddGameModa
       developer: developer || "Estúdio Independente",
       releaseDate: new Date().toISOString().split("T")[0],
       price: 0,
+      genres: ["Indie", "Ação", "Aventura"], // Propriedade exigida pela interface GameData
+      tags: ["Indie", "Singleplayer", "Pixel Art", "2D"], // Propriedade exigida pela interface GameData
       steamRating: {
         scoreDescription: "Extremamente Positiva",
         totalReviews: Math.floor(15 + Math.random() * 200),
@@ -35,7 +37,7 @@ export default function AddGameModal({ isOpen, onClose, onAddGame }: AddGameModa
       metrics: {
         currentPlayers: Math.floor(10 + Math.random() * 80),
         peakPlayers24h: Math.floor(30 + Math.random() * 250),
-        estimatedOwners: "0 - 20,000", // Propriedade obrigatória exigida pela interface
+        estimatedOwners: "0 - 20,000",
       },
     };
 
@@ -93,7 +95,7 @@ export default function AddGameModal({ isOpen, onClose, onAddGame }: AddGameModa
             type="submit"
             className="w-full bg-[#800638] hover:bg-[#60042a] text-white font-bold py-3 rounded-xl transition text-sm shadow-md flex items-center justify-center gap-2"
           >
-            <Plus size= {18} />
+            <Plus size={18} />
             <span>Salvar na Biblioteca Local</span>
           </button>
         </form>
