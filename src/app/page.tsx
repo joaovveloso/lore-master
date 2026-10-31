@@ -12,6 +12,7 @@ import {
   Loader2,
   AlertCircle,
   FileText,
+  Plus,
 } from "lucide-react";
 
 import Header from "@/components/Header";
@@ -21,10 +22,12 @@ import Sidebar, {
 } from "@/components/Sidebar";
 import { useGame } from "@/context/GameContext";
 import { mockGames } from "@/data/mockData";
+import { GameData } from "@/types";
 import CustomTextForm from "@/components/ingestion/CustomTextForm";
 import ExportPDFButton from "@/components/report/ExportPDFButton";
 import MetricsGrid from "@/components/dashboard/MetricsGrid";
 import CreditShopModal from "@/components/dashboard/CreditShopModal";
+import AddGameModal from "@/components/dashboard/AddGameModal";
 
 export default function HomePage() {
   const { 
@@ -42,14 +45,22 @@ export default function HomePage() {
   const [activeSection, setActiveSection] = useState<SectionId | "ingestion">("overview");
   const [localError, setLocalError] = useState<string | null>(null);
   const [isShopOpen, setIsShopOpen] = useState(false);
+  const [isAddGameOpen, setIsAddGameOpen] = useState(false);
+
+  // Estado local da biblioteca de jogos do usuário (permite adicionar novos)
+  const [gamesList, setGamesList] = useState<GameData[]>(mockGames);
 
   const section = activeSection === "ingestion" 
     ? { label: "Ingestão Manual de Feedback" } 
     : getSection(activeSection as SectionId);
     
-  const currentGame = selectedGame ?? mockGames[0];
+  const currentGame = selectedGame ?? gamesList[0];
 
-  // Aciona a análise utilizando o estado global e créditos
+  const handleAddGame = (newGame: GameData) => {
+    setGamesList((prev) => [newGame, ...prev]);
+    setSelectedGame(newGame); // Seleciona automaticamente o jogo recém-criado
+  };
+
   const handleRunAnalysisWithText = (textToAnalyze: string) => {
     setLocalError(null);
 
@@ -65,7 +76,7 @@ export default function HomePage() {
     }
 
     runLocalAnalysis(currentGame.title, textToAnalyze);
-    setActiveSection("diagnosis"); // Redireciona para os resultados
+    setActiveSection("diagnosis");
   };
 
   const metrics = [
@@ -76,8 +87,8 @@ export default function HomePage() {
       icon: MessageSquare,
     },
     {
-      label: "Avaliação Steam",
-      value: currentGame.steamRating ? "Extremamente Positiva" : "—",
+      label: "Avaliação Geral",
+      value: currentGame.steamRating ? currentGame.steamRating.scoreDescription : "—",
       description: `${currentGame.steamRating?.positiveReviews.toLocaleString() ?? 0} positivas`,
       icon: Star,
     },
@@ -109,7 +120,7 @@ export default function HomePage() {
         <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <div className="mx-auto w-full max-w-7xl">
             
-            {/* Cabeçalho da Seção com Créditos, Recarga e Exportação */}
+            {/* Topo com Créditos, Recarga e Exportação */}
             <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-gray-500">
@@ -121,7 +132,6 @@ export default function HomePage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
-                {/* Contador de Créditos + Botão de Recarga Fictícia */}
                 <div className="bg-white border border-[#E5E7EB] px-3.5 py-2 rounded-xl text-xs font-semibold shadow-sm flex items-center gap-2">
                   <span className="text-gray-500 uppercase">Créditos:</span>
                   <span className="text-[#800638] font-extrabold text-sm">{credits.availableCredits}</span>
@@ -133,10 +143,8 @@ export default function HomePage() {
                   </button>
                 </div>
 
-                {/* Botão de Exportar PDF */}
                 <ExportPDFButton analysis={analysis} />
 
-                {/* Botão rápido para alternar para Ingestão Manual */}
                 <button
                   type="button"
                   onClick={() => setActiveSection("ingestion")}
@@ -178,7 +186,7 @@ export default function HomePage() {
               </section>
             )}
 
-            {/* SEÇÃO DE CRÉDITOS E FATURAMENTO (Gerenciada pelo Sidebar) */}
+            {/* SEÇÃO DE CRÉDITOS E FATURAMENTO */}
             {activeSection === "credits" && (
               <section className="space-y-6">
                 <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
@@ -218,41 +226,18 @@ export default function HomePage() {
                       <p className="text-xs text-gray-400">Inclui motor heurístico, PDF e métricas.</p>
                     </div>
                   </div>
-
-                  <div className="pt-4">
-                    <h3 className="text-sm font-bold text-[#252832] mb-3">Histórico Recente de Transações</h3>
-                    <div className="border border-gray-200 rounded-xl overflow-hidden text-xs">
-                      <div className="bg-gray-50 px-4 py-3 font-semibold text-gray-600 grid grid-cols-3">
-                        <span>Operação</span>
-                        <span>Data / Hora</span>
-                        <span className="text-right">Valor</span>
-                      </div>
-                      <div className="divide-y divide-gray-100">
-                        <div className="px-4 py-3 grid grid-cols-3 items-center">
-                          <span className="font-medium text-gray-800">Bônus Inicial de Cadastro (Sandbox)</span>
-                          <span className="text-gray-500">{new Date().toLocaleDateString()}</span>
-                          <span className="text-right font-bold text-emerald-600">+50 Créditos</span>
-                        </div>
-                        <div className="px-4 py-3 grid grid-cols-3 items-center">
-                          <span className="font-medium text-gray-800">Execução de Diagnóstico Preditivo</span>
-                          <span className="text-gray-500">Recentemente</span>
-                          <span className="text-right font-bold text-rose-600">-10 Créditos</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </section>
             )}
 
             {activeSection === "overview" && (
               <>
-                {/* Seletor Rápido de Jogos */}
+                {/* Biblioteca & Seletor de Jogos Local */}
                 <section
                   aria-labelledby="game-heading"
                   className="mb-6 rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-6"
                 >
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-gray-100 pb-4 mb-4">
                     <div className="flex items-center gap-4">
                       <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-[#800638]/10 text-[#800638]">
                         <Gamepad2 size={28} />
@@ -260,13 +245,10 @@ export default function HomePage() {
 
                       <div className="min-w-0">
                         <span className="inline-block rounded-md bg-[#800638]/10 px-2 py-0.5 text-xs font-semibold text-[#800638]">
-                          AppID: {currentGame.appId}
+                          ID do Projeto: {currentGame.appId}
                         </span>
 
-                        <h2
-                          id="game-heading"
-                          className="mt-1 break-words text-xl font-bold text-[#252832]"
-                        >
+                        <h2 id="game-heading" className="mt-1 break-words text-xl font-bold text-[#252832]">
                           {currentGame.title}
                         </h2>
 
@@ -276,8 +258,21 @@ export default function HomePage() {
                       </div>
                     </div>
 
+                    <button
+                      onClick={() => setIsAddGameOpen(true)}
+                      className="inline-flex items-center gap-2 rounded-xl bg-[#800638] px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-[#800638]/20 transition hover:bg-[#60042a]"
+                    >
+                      <Plus size={16} />
+                      <span>Adicionar Novo Jogo</span>
+                    </button>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 mb-2.5 uppercase tracking-wider">
+                      Selecione um jogo da sua biblioteca para analisar:
+                    </p>
                     <div className="flex flex-wrap gap-2">
-                      {mockGames.map((game) => (
+                      {gamesList.map((game) => (
                         <button
                           key={game.appId}
                           type="button"
@@ -288,7 +283,7 @@ export default function HomePage() {
                               : "border border-[#E5E7EB] bg-white text-gray-700 hover:bg-[#F7F8FA] hover:border-gray-300"
                           }`}
                         >
-                          {game.title}
+                          🎮 {game.title}
                         </button>
                       ))}
                     </div>
@@ -417,27 +412,13 @@ export default function HomePage() {
                 </div>
               </section>
             )}
-
-            {/* Outras seções padrão (caso alguma outra exista no sidebar que não seja créditos/overview/diagnosis/ingestion) */}
-            {activeSection !== "overview" && activeSection !== "diagnosis" && activeSection !== "ingestion" && activeSection !== "credits" && (
-              <section className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm">
-                <div className="mx-auto flex max-w-lg flex-col items-center py-12 text-center">
-                  <div className="flex size-14 items-center justify-center rounded-2xl bg-[#800638]/10 text-[#800638]">
-                    <BarChart3 size={28} />
-                  </div>
-                  <h2 className="mt-4 text-xl font-bold text-[#252832]">{section.label}</h2>
-                  <p className="mt-2 text-sm leading-6 text-gray-600">
-                    Esta seção está preparada para exibir os relatórios detalhados e métricas avançadas.
-                  </p>
-                </div>
-              </section>
-            )}
           </div>
         </main>
       </div>
 
-      {/* Modal Sandbox de Compra de Créditos */}
+      {/* Modais de Suporte */}
       <CreditShopModal isOpen={isShopOpen} onClose={() => setIsShopOpen(false)} />
+      <AddGameModal isOpen={isAddGameOpen} onClose={() => setIsAddGameOpen(false)} onAddGame={handleAddGame} />
     </div>
   );
 }
