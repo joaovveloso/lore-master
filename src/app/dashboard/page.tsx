@@ -3,60 +3,48 @@
 import { useState } from "react";
 import { useGame } from "@/context/GameContext";
 import MetricsGrid from "@/components/dashboard/MetricsGrid";
-import { AnalysisResponse } from "@/types";
+import ExportPDFButton from "@/components/report/ExportPDFButton";
 
 export default function DashboardPage() {
-  const { credits, deductCredits, hasEnoughCredits, error: contextError } = useGame();
-  const [analysis, setAnalysis] = useState<AnalysisResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const { 
+    credits, 
+    deductCredits, 
+    hasEnoughCredits, 
+    analysis, 
+    isLoading, 
+    runLocalAnalysis, 
+    error: contextError 
+  } = useGame();
+
+  const [gameTitle, setGameTitle] = useState("Meu Jogo Indie");
+  const [description, setDescription] = useState("Jogo de plataforma focado em exploração com mecânicas de tempo e combate desafiador.");
   const [localError, setLocalError] = useState<string | null>(null);
 
-  const handleRunDiagnostic = async () => {
-    // Valida se o usuário tem créditos suficientes (10 créditos para diagnóstico)
+  const handleRunDiagnostic = () => {
+    // 1. Valida se tem créditos suficientes (ex: 10 créditos por análise)
     if (!hasEnoughCredits(10)) {
-      setLocalError("Créditos insuficientes! Você precisa de pelo menos 10 créditos.");
+      setLocalError("Créditos insuficientes! Você precisa de pelo menos 10 créditos para rodar o diagnóstico.");
       return;
     }
 
     setLocalError(null);
-    setIsLoading(true);
 
-    // Deduz os créditos via Dev 7 context
-    const success = await deductCredits(10);
+    // 2. Tenta deduzir os créditos no contexto global
+    const success = deductCredits(10);
     if (!success) {
-      setIsLoading(false);
+      setLocalError("Não foi possível deduzir os créditos.");
       return;
     }
 
-    try {
-      // Simulação de chamada ou integração com a API Route do Dev 9
-      const response = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          appId: 12345,
-          gameTitle: "Deadlock / Indie Game",
-          description: "Análise preditiva de feedback e performance da comunidade.",
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Erro ao processar diagnóstico na API.");
-      }
-
-      const data = await response.json();
-      setAnalysis(data);
-    } catch (err) {
-      setLocalError((err as Error).message);
-    } finally {
-      setIsLoading(false);
-    }
+    // 3. Dispara a análise local inteligente
+    runLocalAnalysis(gameTitle, description);
   };
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* Top Bar com Créditos e Ação */}
+        
+        {/* Top Bar com Créditos e Ações */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Lore Master Dashboard</h1>
@@ -66,18 +54,49 @@ export default function DashboardPage() {
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="bg-zinc-950 border border-zinc-800 px-4 py-2 rounded-xl text-sm">
-              <span className="text-zinc-400">Créditos Disponíveis: </span>
-              <span className="font-bold text-rose-500">{credits.availableCredits}</span>
+            {/* Contador Reativo de Créditos */}
+            <div className="bg-zinc-950 border border-zinc-800 px-4 py-2.5 rounded-xl text-sm flex items-center gap-2">
+              <span className="text-zinc-400">Créditos:</span>
+              <span className="font-extrabold text-rose-500 text-base">{credits.availableCredits}</span>
             </div>
+
+            {/* Botão de Exportar PDF do Dev 3 */}
+            <ExportPDFButton analysis={analysis} />
 
             <button
               onClick={handleRunDiagnostic}
               disabled={isLoading}
               className="bg-rose-600 hover:bg-rose-500 text-white font-medium px-5 py-2.5 rounded-xl transition disabled:opacity-50 text-sm shadow-lg shadow-rose-950/40"
             >
-              {isLoading ? "Processando..." : "Executar Diagnóstico (10 Créditos)"}
+              {isLoading ? "Analisando..." : "Executar Diagnóstico (-10 Créditos)"}
             </button>
+          </div>
+        </div>
+
+        {/* Card de Entrada de Dados (Feedback Manual) */}
+        <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-6 space-y-4 shadow-lg">
+          <h2 className="text-sm font-semibold tracking-wider text-rose-400 uppercase">
+            Colar Feedback Manual
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Título do Jogo</label>
+              <input
+                type="text"
+                value={gameTitle}
+                onChange={(e) => setGameTitle(e.target.value)}
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-rose-600"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-400 mb-1">Descrição / Feedback da Comunidade</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={2}
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-rose-600 resize-none"
+              />
+            </div>
           </div>
         </div>
 
@@ -87,7 +106,7 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Grid de Métricas do Dev 5 */}
+        {/* Grid de Métricas e Skeletons */}
         <MetricsGrid analysis={analysis} isLoading={isLoading} />
       </div>
     </div>
