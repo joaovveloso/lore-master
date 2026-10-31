@@ -12,6 +12,7 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle2,
+  FileText,
 } from "lucide-react";
 
 import Header from "@/components/Header";
@@ -22,24 +23,29 @@ import Sidebar, {
 import { useGame } from "@/context/GameContext";
 import { mockGames } from "@/data/mockData";
 import { AnalysisResponse } from "@/types/analysis";
+import { CustomTextForm } from "@/components/ingestion/CustomTextForm";
 
 export default function HomePage() {
   const gameContext = useGame();
   const selectedGame = gameContext?.selectedGame ?? mockGames[0];
   const setSelectedGame = gameContext?.setSelectedGame ?? (() => {});
 
-  const [activeSection, setActiveSection] = useState<SectionId>("overview");
+  // Adicionamos "ingestion" como uma seção válida opcional na UI
+  const [activeSection, setActiveSection] = useState<SectionId | "ingestion">("overview");
 
   // Estados para integração com a API da IA (Dev 9)
   const [loading, setLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const section = getSection(activeSection);
+  const section = activeSection === "ingestion" 
+    ? { label: "Ingestão Manual de Feedback" } 
+    : getSection(activeSection as SectionId);
+    
   const currentGame = selectedGame ?? mockGames[0];
 
-  // Função para acionar o motor de IA (Dev 9 -> /api/analyze)
-  const handleRunAnalysis = async () => {
+  // Função para acionar o motor de IA via Ingestão Manual ou Steam
+  const handleRunAnalysisWithText = async (textToAnalyze: string) => {
     setLoading(true);
     setError(null);
 
@@ -49,7 +55,7 @@ export default function HomePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           gameTitle: currentGame.title,
-          description: `Jogo desenvolvido por ${currentGame.developer}. AppID: ${currentGame.appId}.`,
+          description: textToAnalyze,
           steamData: currentGame,
         }),
       });
@@ -61,6 +67,7 @@ export default function HomePage() {
       }
 
       setAnalysisResult(data);
+      setActiveSection("diagnosis"); // Redireciona para ver o resultado gerado
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido ao chamar a API.");
     } finally {
@@ -101,8 +108,8 @@ export default function HomePage() {
 
       <div className="flex min-h-[calc(100vh-4rem)] flex-col md:flex-row">
         <Sidebar
-          active={activeSection}
-          onSelect={setActiveSection}
+          active={activeSection === "ingestion" ? "overview" : activeSection}
+          onSelect={(sec) => setActiveSection(sec)}
           className="md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:w-[268px] md:self-start md:overflow-y-auto"
         />
 
@@ -120,16 +127,49 @@ export default function HomePage() {
               </div>
 
               <div className="flex items-center gap-3">
+                {/* Botão rápido para alternar para Ingestão Manual */}
+                <button
+                  type="button"
+                  onClick={() => setActiveSection("ingestion")}
+                  className="inline-flex items-center gap-2 rounded-xl border border-[#800638]/30 bg-[#800638]/5 px-3.5 py-2 text-xs font-semibold text-[#800638] shadow-sm transition-all hover:bg-[#800638]/10"
+                >
+                  <FileText size={14} />
+                  <span>Colar Feedback Manual (Dev 6B)</span>
+                </button>
+
                 <span className="inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-sm">
                   <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-                  {selectedGame ? `Ativo: ${selectedGame.title}` : "Modo Padrão (Deadlock)"}
-                </span>
-
-                <span className="rounded-lg bg-[#800638]/10 px-3 py-1.5 font-mono text-xs font-semibold text-[#800638]">
-                  v0.1 • Develop
+                  {selectedGame ? `Ativo: ${selectedGame.title}` : "Modo Padrão"}
                 </span>
               </div>
             </div>
+
+            {/* SEÇÃO: INGESTÃO MANUAL DE TEXTO (DEV 6B) */}
+            {activeSection === "ingestion" && (
+              <section className="space-y-6">
+                <div className="mb-4">
+                  <h2 className="text-lg font-semibold text-[#252832]">Ingestão Customizada de Feedback</h2>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Cole comentários brutos de Discord, Reddit ou pesquisas para submetê-los diretamente ao Gemini.
+                  </p>
+                </div>
+
+                <CustomTextForm
+                  onSubmitAnalysis={handleRunAnalysisWithText}
+                  isLoading={loading}
+                />
+
+                {error && (
+                  <div className="mt-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
+                    <AlertCircle size={20} className="shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-semibold text-sm">Erro ao processar ingestão</h4>
+                      <p className="text-xs mt-1">{error}</p>
+                    </div>
+                  </div>
+                )}
+              </section>
+            )}
 
             {activeSection === "overview" && (
               <>
@@ -254,7 +294,7 @@ export default function HomePage() {
               </>
             )}
 
-            {/* Renderização da Seção de Diagnóstico (Integrada à API pelo Dev 9) */}
+            {/* Renderização da Seção de Diagnóstico */}
             {activeSection === "diagnosis" && (
               <section className="space-y-6">
                 <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm">
@@ -266,24 +306,34 @@ export default function HomePage() {
                       </p>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={handleRunAnalysis}
-                      disabled={loading}
-                      className="flex items-center justify-center gap-2 rounded-xl bg-[#800638] px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-[#800638]/20 transition-all hover:bg-[#60042a] disabled:opacity-50"
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 size={18} className="animate-spin" />
-                          <span>Processando IA...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles size={18} />
-                          <span>Executar Diagnóstico com IA</span>
-                        </>
-                      )}
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setActiveSection("ingestion")}
+                        className="rounded-xl border border-gray-200 px-4 py-3 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                      >
+                        Usar Texto Customizado
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRunAnalysisWithText(`Jogo desenvolvido por ${currentGame.developer}. Descrição: ${currentGame.description}`)}
+                        disabled={loading}
+                        className="flex items-center justify-center gap-2 rounded-xl bg-[#800638] px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-[#800638]/20 transition-all hover:bg-[#60042a] disabled:opacity-50"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 size={18} className="animate-spin" />
+                            <span>Processando IA...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles size={18} />
+                            <span>Executar Diagnóstico com IA</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Exibição de Erros */}
@@ -353,8 +403,8 @@ export default function HomePage() {
               </section>
             )}
 
-            {/* Outras seções */}
-            {activeSection !== "overview" && activeSection !== "diagnosis" && (
+            {/* Outras seções padrão */}
+            {activeSection !== "overview" && activeSection !== "diagnosis" && activeSection !== "ingestion" && (
               <section className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm">
                 <div className="mx-auto flex max-w-lg flex-col items-center py-12 text-center">
                   <div className="flex size-14 items-center justify-center rounded-2xl bg-[#800638]/10 text-[#800638]">
