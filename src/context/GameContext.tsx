@@ -70,44 +70,42 @@ export function GameProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  // Motor local inteligente (substituto da IA paga) para gerar análises ricas baseadas no texto livre
+  // Motor local inteligente e contextualizado para o jogo ativo
   const runLocalAnalysis = useCallback((gameTitle: string, description: string) => {
     setIsLoading(true);
     setError(null);
 
     setTimeout(() => {
       const lowerDesc = description.toLowerCase();
+      const gameInfo = selectedGame ? selectedGame.title : gameTitle;
       
-      // Heurísticas inteligentes baseadas no texto do usuário
-      const hasPerfIssue = lowerDesc.includes("fps") || lowerDesc.includes("lag") || lowerDesc.includes("trava") || lowerDesc.includes("otimização");
-      const hasMonoIssue = lowerDesc.includes("preço") || lowerDesc.includes("venda") || lowerDesc.includes("monetização") || lowerDesc.includes("steam");
-      const hasDesignIssue = lowerDesc.includes("tutorial") || lowerDesc.includes("difícil") || lowerDesc.includes("jogabilidade") || lowerDesc.includes("mecânica");
+      const isAction = gameInfo.toLowerCase().includes("chronos") || lowerDesc.includes("fps") || lowerDesc.includes("combate") || lowerDesc.includes("lag");
 
       const mockAnalysis: AnalysisResponse = {
         analysisId: `LM-${Math.floor(100000 + Math.random() * 900000)}`,
         appId: selectedGame?.appId || 999888,
         timestamp: new Date().toISOString(),
-        overallScore: Math.floor(65 + Math.random() * 25),
-        summary: `Relatório preditivo gerado para "${gameTitle}". A premissa demonstra bom potencial de mercado, porém foram detectados pontos de fricção críticos que exigem ajustes imediatos para conversão na Steam.`,
-        predictedSuccessRate: Number((0.70 + Math.random() * 0.20).toFixed(2)),
+        overallScore: Math.floor(72 + Math.random() * 20),
+        summary: `Análise preditiva aprofundada para "${gameInfo}" (${selectedGame?.developer || "Estúdio Independente"}). O engajamento base é forte, mas o cruzamento de feedback aponta gargalos de retenção de longo prazo e fricção na conversão de novos jogadores.`,
+        predictedSuccessRate: Number((0.75 + Math.random() * 0.18).toFixed(2)),
         issues: [
           {
             id: "issue-1",
-            category: hasDesignIssue ? "gameplay" : "marketing",
-            title: hasDesignIssue ? "Curva de aprendizado acentuada" : "Posicionamento de tags e visibilidade inicial",
-            description: `Análise detalhada baseada no feedback: "${description.slice(0, 120)}..."`,
+            category: isAction ? "performance" : "gameplay",
+            title: isAction ? "Quedas de taxa de quadros (FPS) em arenas" : "Balanceamento da curva de dificuldade inicial",
+            description: `Com base nas avaliações do jogo "${gameInfo}": "${description.slice(0, 100)}..."`,
             severity: "high",
-            impactScore: 85,
-            recommendation: "Refinar os primeiros 15 minutos de experiência do jogador para reter o público orgânico."
+            impactScore: 88,
+            recommendation: isAction ? "Otimizar o pipeline de partículas e implementar culling dinâmico." : "Suavizar o pico de dificuldade nas primeiras 2 horas de progressão."
           },
           {
             id: "issue-2",
-            category: hasPerfIssue ? "performance" : "monetization",
-            title: hasPerfIssue ? "Gargalos de estabilidade de FPS" : "Estratégia de precificação e pacotes de expansão",
-            description: "Identificada variação de performance em hardwares intermediários durante pico de partículas.",
-            severity: hasPerfIssue ? "critical" : "medium",
-            impactScore: 78,
-            recommendation: hasPerfIssue ? "Implementar otimização de batch rendering e culling." : "Ajustar o preço regional para melhorar conversão em mercados emergentes."
+            category: "monetization",
+            title: "Precificação e percepção de valor na Steam",
+            description: "A relação entre o conteúdo entregue e o preço base regional gera resistência em mercados emergentes.",
+            severity: "medium",
+            impactScore: 74,
+            recommendation: "Revisar a matriz de preços regionais e introduzir pacotes de expansão cosmética."
           }
         ]
       };
