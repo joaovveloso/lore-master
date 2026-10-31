@@ -277,7 +277,7 @@ export default function HomePage() {
                         Pronto para executar o diagnóstico de {currentGame.title}?
                       </h2>
                       <p className="max-w-xl text-sm text-white/90">
-                        O motor analítico irá processar os dados da Steam para extrair padrões de bugs e recomendações acionáveis.
+                        O motor analítico irá processar os dados para extrair padrões e recomendações acionáveis.
                       </p>
                     </div>
 
@@ -317,7 +317,7 @@ export default function HomePage() {
 
                       <button
                         type="button"
-                        onClick={() => handleRunAnalysisWithText(`Jogo desenvolvido por ${currentGame.developer}. Descrição: ${currentGame.description}`)}
+                        onClick={() => handleRunAnalysisWithText(`Jogo desenvolvido por ${currentGame.developer}. AppID: ${currentGame.appId}.`)}
                         disabled={loading}
                         className="flex items-center justify-center gap-2 rounded-xl bg-[#800638] px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-[#800638]/20 transition-all hover:bg-[#60042a] disabled:opacity-50"
                       >
