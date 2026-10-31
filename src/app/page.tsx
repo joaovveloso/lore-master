@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import {
-  BarChart3,
   Gamepad2,
   MessageSquare,
   Sparkles,
@@ -13,9 +12,6 @@ import {
   AlertCircle,
   FileText,
   Plus,
-  ShieldAlert,
-  AlertTriangle,
-  CheckCircle2,
   Zap,
   TrendingUp,
 } from "lucide-react";
@@ -69,9 +65,10 @@ export default function HomePage() {
   const currentGame = selectedGame ?? gamesList[0];
   const rivalGame = selectedRival ?? gamesList.find(g => g.appId !== currentGame.appId) ?? gamesList[0];
 
-  // Fallback analítico rico alinhado estritamente com o tipo GameIssue
+  // Fallback analítico com appId incluído para satisfazer o tipo AnalysisResponse
   const defaultAnalysis: AnalysisResponse = {
     analysisId: "LM-9824-PRO",
+    appId: currentGame.appId,
     timestamp: new Date().toISOString(),
     overallScore: 84,
     predictedSuccessRate: 0.88,
@@ -423,7 +420,7 @@ export default function HomePage() {
               </section>
             )}
 
-            {/* SEÇÃO: PROBLEMAS RECORRENTES (FEEDBACK) */}
+            {/* SEÇÃO: PROBLEMAS RECORRENTES (FEEDBACK) - FORMATO DE LISTA LIMPA */}
             {activeSection === "feedback" && (
               <section className="space-y-6">
                 <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
@@ -434,66 +431,25 @@ export default function HomePage() {
                     </p>
                   </div>
 
-                  <div className="space-y-6">
-                    {/* Gráfico de Barras de Distribuição de Severidade */}
-                    <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-4">
-                      <h3 className="font-bold text-xs text-gray-500 uppercase tracking-wider">Distribuição de Gravidade dos Gargalos</h3>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <ShieldAlert size={18} className="text-rose-600" />
-                            <span className="text-xs font-bold text-gray-700">Críticos</span>
-                          </div>
-                          <span className="text-lg font-black text-rose-600">
-                            {analysis.issues.filter(i => i.severity === "critical").length}
+                  <div className="space-y-4">
+                    {analysis.issues.map((issue) => (
+                      <div key={issue.id} className="rounded-xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-bold text-sm text-[#252832]">{issue.title}</h4>
+                          <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase ${
+                            issue.severity === "critical" ? "bg-rose-100 text-rose-700" :
+                            issue.severity === "high" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"
+                          }`}>
+                            {issue.severity === "critical" ? "Crítico" : issue.severity === "high" ? "Alta" : "Média"}
                           </span>
                         </div>
-
-                        <div className="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <AlertTriangle size={18} className="text-amber-600" />
-                            <span className="text-xs font-bold text-gray-700">Alta Severidade</span>
-                          </div>
-                          <span className="text-lg font-black text-amber-600">
-                            {analysis.issues.filter(i => i.severity === "high").length}
-                          </span>
-                        </div>
-
-                        <div className="bg-white p-4 rounded-xl border border-gray-200 flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 size={18} className="text-blue-600" />
-                            <span className="text-xs font-bold text-gray-700">Média / Ajuste</span>
-                          </div>
-                          <span className="text-lg font-black text-blue-600">
-                            {analysis.issues.filter(i => i.severity === "medium").length}
-                          </span>
+                        <p className="text-xs text-gray-600">{issue.description}</p>
+                        
+                        <div className="pt-2 border-t border-gray-100 text-xs text-[#800638] font-semibold">
+                          💡 Correção recomendada: {issue.recommendation}
                         </div>
                       </div>
-                    </div>
-
-                    {/* Lista Detalhada de Gargalos */}
-                    <div className="space-y-4">
-                      <h3 className="font-bold text-sm text-[#252832]">Detalhamento Técnico das Ocorrências</h3>
-                      {analysis.issues.map((issue) => (
-                        <div key={issue.id} className="rounded-xl border border-gray-200 bg-white p-5 space-y-3 shadow-sm">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-bold text-sm text-[#252832]">{issue.title}</h4>
-                            <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase ${
-                              issue.severity === "critical" ? "bg-rose-100 text-rose-700" :
-                              issue.severity === "high" ? "bg-amber-100 text-amber-700" : "bg-blue-100 text-blue-700"
-                            }`}>
-                              {issue.severity === "critical" ? "Crítico" : issue.severity === "high" ? "Alta" : "Média"}
-                            </span>
-                          </div>
-                          <p className="text-xs text-gray-600">{issue.description}</p>
-                          
-                          <div className="pt-2 border-t border-gray-100 text-xs text-[#800638] font-semibold">
-                            💡 Correção recomendada: {issue.recommendation}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    ))}
                   </div>
                 </div>
               </section>
