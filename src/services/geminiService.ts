@@ -10,7 +10,6 @@ function parseAndSanitizeResponse(rawText: string): AnalysisResponse {
     throw new Error('A API do Gemini retornou uma resposta vazia.');
   }
 
-  // Remove blocos de código markdown ```json ... ``` caso a LLM insira
   let sanitized = rawText.trim();
   if (sanitized.startsWith('```')) {
     sanitized = sanitized.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
@@ -19,7 +18,6 @@ function parseAndSanitizeResponse(rawText: string): AnalysisResponse {
   try {
     const parsed = JSON.parse(sanitized) as AnalysisResponse;
 
-    // Validação estrutural básica dos campos obrigatórios
     if (typeof parsed.healthScore !== 'number' || !Array.isArray(parsed.bottlenecks)) {
       throw new Error('Estrutura de JSON inválida para AnalysisResponse.');
     }
@@ -41,19 +39,44 @@ export async function runGeminiAnalysis(
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash',
-    generationConfig: {
-      responseMimeType: 'application/json',
-      temperature: 0.2,
-    },
-  });
 
-  // Utiliza o gerador de prompt oficial do Dev 4 (aiPrompts.ts) ou um customPrompt
-  const promptContent = customPrompt || buildAnalysisPrompt(payload);
+  const promptContent = customPrompt || (buildAnalysisPrompt ? buildAnalysisPrompt(payload) : `
+Analise o feedback/dados do jogo "${payload.gameTitle}" e retorne estritamente um JSON no seguinte formato:
+{
+  "healthScore": 85,
+  "summary": "Resumo analítico específico sobre ${payload.gameTitle} com base em: ${payload.description}",
+  "bottlenecks": [
+    { "category": "Game Design", "issue": "Problema específico identificado", "impact": "High" }
+  ],
+  "recommendations": [
+    { "action": "Ação recomendada", "expectedOutcome": "Resultado esperado", "priority": "Alta" }
+  ]
+}
+`);
 
-  const result = await model.generateContent(promptContent);
-  const responseText = result.response.text();
+  // Lista de modelos compatíveis para tentativa e resiliência
+  const modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-pro'];
 
-  return parseAndSanitizeResponse(responseText);
+  let lastError: any = null;
+
+  for (const modelName of modelsToTry) {
+    try {
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        generationConfig: {
+          responseMimeType: 'application/json',
+          temperature: 0.2,
+        },
+      });
+
+      const result = await model.generateContent(promptContent);
+      const responseText = result.response.text();
+      return parseAndSanitizeResponse(responseText);
+    } catch (err) {
+      console.warn(`[GeminiService] Falha com modelo ${modelName}, tentando próximo... Erro:`, err);
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error('Não foi possível obter resposta de nenhum modelo Gemini.');
 }
