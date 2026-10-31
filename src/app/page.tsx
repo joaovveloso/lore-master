@@ -45,7 +45,8 @@ export default function HomePage() {
     error: contextError 
   } = useGame();
 
-  const [activeSection, setActiveSection] = useState<SectionId | "ingestion">("overview");
+  // Tipagem atualizada para aceitar perfeitamente todas as abas da sidebar
+  const [activeSection, setActiveSection] = useState<SectionId | "ingestion" | "benchmarking" | "issues">("overview");
   const [localError, setLocalError] = useState<string | null>(null);
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isAddGameOpen, setIsAddGameOpen] = useState(false);
