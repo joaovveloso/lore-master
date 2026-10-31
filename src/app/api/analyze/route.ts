@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { runGeminiAnalysis } from '@/services/geminiService';
-import { AnalyzeRequestBody, AnalysisResponse } from '@/types/analysis';
+import { AnalyzeRequestBody, AnalysisResponse, Bottleneck, Recommendation } from '@/types/analysis';
 import { sanitizeInputText } from '@/utils/sanitizer';
 
 /**
@@ -9,17 +9,16 @@ import { sanitizeInputText } from '@/utils/sanitizer';
 function createContextualFallback(gameTitle: string, description: string): AnalysisResponse {
   const lowerDesc = description.toLowerCase();
   
-  // Tópicos dinâmicos de acordo com as palavras-chave do texto
   const isPerformance = lowerDesc.includes('fps') || lowerDesc.includes('lag') || lowerDesc.includes('queda') || lowerDesc.includes('bug');
   const isDifficulty = lowerDesc.includes('dificuldade') || lowerDesc.includes('desistir') || lowerDesc.includes('chefe') || lowerDesc.includes('hard');
-  const isUI = lowerDesc.includes('interface') || lowerDesc.includes('menu') || lowerDesc.includes('controle');
+  const isMonetization = lowerDesc.includes('preço') || lowerDesc.includes('loja') || lowerDesc.includes('pay') || lowerDesc.includes('monetiz');
 
-  const bottlenecks = [];
-  const recommendations = [];
+  const bottlenecks: Bottleneck[] = [];
+  const recommendations: Recommendation[] = [];
 
   if (isPerformance) {
     bottlenecks.push({
-      category: 'Performance',
+      category: 'Technical',
       issue: `Relatos de instabilidade técnica e variações de taxa de quadros em ${gameTitle}.`,
       impact: 'High',
     });
@@ -32,7 +31,7 @@ function createContextualFallback(gameTitle: string, description: string): Analy
 
   if (isDifficulty) {
     bottlenecks.push({
-      category: 'Game Balance',
+      category: 'Game Design',
       issue: `Curva de aprendizado ou pico acentuado de dificuldade relatado em ${gameTitle}.`,
       impact: 'High',
     });
@@ -43,15 +42,28 @@ function createContextualFallback(gameTitle: string, description: string): Analy
     });
   }
 
-  if (isUI || bottlenecks.length === 0) {
+  if (isMonetization) {
     bottlenecks.push({
-      category: 'UX / Interface',
-      issue: `Navegação ou usabilidade de menus necessita de refinamento para usuários de ${gameTitle}.`,
+      category: 'Monetization',
+      issue: `Resistência da comunidade em relação ao modelo de monetização de ${gameTitle}.`,
       impact: 'Medium',
     });
     recommendations.push({
-      action: 'Reformulação do mapeamento de atalhos e suporte aprimorado a periféricos.',
-      expectedOutcome: 'Melhoria na satisfação do usuário e fluidez na navegação dos menus.',
+      action: 'Reavaliar precificação de itens cosméticos e valor percebido.',
+      expectedOutcome: 'Aumento na conversão da loja e satisfação dos jogadores.',
+      priority: 'Média',
+    });
+  }
+
+  if (bottlenecks.length === 0) {
+    bottlenecks.push({
+      category: 'Game Design',
+      issue: `Feedback geral da comunidade de ${gameTitle} aponta pontos de melhoria na experiência geral.`,
+      impact: 'Medium',
+    });
+    recommendations.push({
+      action: 'Refinar balanceamento geral e escutar sugestões recorrentes nos fóruns.',
+      expectedOutcome: 'Melhoria na satisfação geral do público e retenção.',
       priority: 'Média',
     });
   }
