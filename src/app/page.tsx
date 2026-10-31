@@ -45,8 +45,8 @@ export default function HomePage() {
     error: contextError 
   } = useGame();
 
-  // Tipagem atualizada para aceitar perfeitamente todas as abas da sidebar
-  const [activeSection, setActiveSection] = useState<SectionId | "ingestion" | "benchmarking" | "issues">("overview");
+  // Tipagem sincronizada com o SectionId padrão do componente Sidebar
+  const [activeSection, setActiveSection] = useState<SectionId | "ingestion">("overview");
   const [localError, setLocalError] = useState<string | null>(null);
   const [isShopOpen, setIsShopOpen] = useState(false);
   const [isAddGameOpen, setIsAddGameOpen] = useState(false);
@@ -117,7 +117,7 @@ export default function HomePage() {
       <div className="flex min-h-[calc(100vh-4rem)] flex-col md:flex-row">
         <Sidebar
           active={activeSection === "ingestion" ? "overview" : activeSection}
-          onSelect={(sec) => setActiveSection(sec)}
+          onSelect={(sec) => setActiveSection(sec as SectionId | "ingestion")}
           className="md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:w-[268px] md:self-start md:overflow-y-auto"
         />
 
@@ -233,8 +233,8 @@ export default function HomePage() {
               </section>
             )}
 
-            {/* SEÇÃO: BENCHMARKING */}
-            {activeSection === "benchmarking" && (
+            {/* SEÇÃO: BENCHMARK */}
+            {activeSection === "benchmark" && (
               <section className="space-y-6">
                 <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
                   <div className="border-b border-gray-100 pb-4">
