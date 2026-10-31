@@ -178,6 +178,73 @@ export default function HomePage() {
               </section>
             )}
 
+            {/* SEÇÃO DE CRÉDITOS E FATURAMENTO (Gerenciada pelo Sidebar) */}
+            {activeSection === "credits" && (
+              <section className="space-y-6">
+                <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-gray-100">
+                    <div>
+                      <h2 className="text-xl font-bold text-[#252832]">Gerenciamento de Créditos</h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Acompanhe seu saldo atual, histórico de consumo e planos de assinatura do Lore Master.
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => setIsShopOpen(true)}
+                      className="bg-[#800638] hover:bg-[#60042a] text-white px-5 py-3 rounded-xl text-xs font-bold transition shadow-md shadow-[#800638]/20 flex items-center gap-2"
+                    >
+                      <Sparkles size={16} />
+                      <span>Adicionar Mais Créditos</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-2">
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Saldo Disponível</p>
+                      <p className="text-3xl font-extrabold text-[#800638]">{credits.availableCredits} Créditos</p>
+                      <p className="text-xs text-gray-400">Equivale a aprox. {Math.floor(credits.availableCredits / 10)} diagnósticos completos.</p>
+                    </div>
+
+                    <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-2">
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Plano Atual</p>
+                      <p className="text-2xl font-bold text-[#252832]">Indie Pro (Sandbox)</p>
+                      <p className="text-xs text-emerald-600 font-medium">● Renovação ativa em ambiente de testes</p>
+                    </div>
+
+                    <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-2">
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Custo por Análise</p>
+                      <p className="text-2xl font-bold text-[#252832]">10 Créditos</p>
+                      <p className="text-xs text-gray-400">Inclui motor heurístico, PDF e métricas.</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4">
+                    <h3 className="text-sm font-bold text-[#252832] mb-3">Histórico Recente de Transações</h3>
+                    <div className="border border-gray-200 rounded-xl overflow-hidden text-xs">
+                      <div className="bg-gray-50 px-4 py-3 font-semibold text-gray-600 grid grid-cols-3">
+                        <span>Operação</span>
+                        <span>Data / Hora</span>
+                        <span className="text-right">Valor</span>
+                      </div>
+                      <div className="divide-y divide-gray-100">
+                        <div className="px-4 py-3 grid grid-cols-3 items-center">
+                          <span className="font-medium text-gray-800">Bônus Inicial de Cadastro (Sandbox)</span>
+                          <span className="text-gray-500">{new Date().toLocaleDateString()}</span>
+                          <span className="text-right font-bold text-emerald-600">+50 Créditos</span>
+                        </div>
+                        <div className="px-4 py-3 grid grid-cols-3 items-center">
+                          <span className="font-medium text-gray-800">Execução de Diagnóstico Preditivo</span>
+                          <span className="text-gray-500">Recentemente</span>
+                          <span className="text-right font-bold text-rose-600">-10 Créditos</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
+
             {activeSection === "overview" && (
               <>
                 {/* Seletor Rápido de Jogos */}
@@ -351,8 +418,8 @@ export default function HomePage() {
               </section>
             )}
 
-            {/* Outras seções padrão */}
-            {activeSection !== "overview" && activeSection !== "diagnosis" && activeSection !== "ingestion" && (
+            {/* Outras seções padrão (caso alguma outra exista no sidebar que não seja créditos/overview/diagnosis/ingestion) */}
+            {activeSection !== "overview" && activeSection !== "diagnosis" && activeSection !== "ingestion" && activeSection !== "credits" && (
               <section className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm">
                 <div className="mx-auto flex max-w-lg flex-col items-center py-12 text-center">
                   <div className="flex size-14 items-center justify-center rounded-2xl bg-[#800638]/10 text-[#800638]">
