@@ -65,7 +65,7 @@ export default function HomePage() {
   const currentGame = selectedGame ?? gamesList[0];
   const rivalGame = selectedRival ?? gamesList.find(g => g.appId !== currentGame.appId) ?? gamesList[0];
 
-  // Fallback analítico com categorias estritamente válidas para o TypeScript
+  // Análise rica com 6 problemas reais do Among Us e soluções detalhadas
   const defaultAnalysis: AnalysisResponse = {
     analysisId: "LM-9453-AMONG",
     appId: 945360,
@@ -131,7 +131,8 @@ export default function HomePage() {
     ]
   };
 
-  const analysis = contextAnalysis ?? defaultAnalysis;
+  // Garante que o analysis nunca venha vazio ou nulo, usando os 6 problemas do Among Us como padrão
+  const analysis = contextAnalysis?.issues?.length ? contextAnalysis : defaultAnalysis;
 
   const handleAddGame = (newGame: GameData) => {
     setGamesList((prev) => [newGame, ...prev]);
@@ -447,7 +448,7 @@ export default function HomePage() {
               </section>
             )}
 
-            {/* SEÇÃO: PROBLEMAS RECORRENTES (FEEDBACK) - 6 PROBLEMAS REAIS */}
+            {/* SEÇÃO: PROBLEMAS RECORRENTES (FEEDBACK) - 6 PROBLEMAS REAIS DO AMONG US */}
             {activeSection === "feedback" && (
               <section className="space-y-6">
                 <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
@@ -472,9 +473,9 @@ export default function HomePage() {
                         </div>
                         <p className="text-xs text-gray-600">{issue.description}</p>
                         
-                        <div className="pt-2 border-t border-gray-100 text-xs text-[#800638] font-semibold flex items-center justify-between">
+                        <div className="pt-2 border-t border-gray-100 text-xs text-[#800638] font-semibold flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
                           <span>💡 Correção recomendada: {issue.recommendation}</span>
-                          <span className="text-[10px] font-mono bg-gray-100 px-2 py-0.5 rounded text-gray-500">Impacto: {issue.impactScore}/10</span>
+                          <span className="text-[10px] font-mono bg-gray-100 px-2 py-0.5 rounded text-gray-500 shrink-0">Impacto: {issue.impactScore}/10</span>
                         </div>
                       </div>
                     ))}
