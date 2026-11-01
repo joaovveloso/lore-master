@@ -14,9 +14,6 @@ import {
   Plus,
   Zap,
   TrendingUp,
-  ShieldAlert,
-  AlertTriangle,
-  CheckCircle2,
 } from "lucide-react";
 
 import Header from "@/components/Header";
@@ -68,10 +65,10 @@ export default function HomePage() {
   const currentGame = selectedGame ?? gamesList[0];
   const rivalGame = selectedRival ?? gamesList.find(g => g.appId !== currentGame.appId) ?? gamesList[0];
 
-  // Fallback analítico rico modelado com dados reais do Among Us para os prints da apresentação
+  // Fallback analítico com appId ajustado para number (945360)
   const defaultAnalysis: AnalysisResponse = {
     analysisId: "LM-9453-AMONG",
-    appId: "945360",
+    appId: 945360,
     timestamp: new Date().toISOString(),
     overallScore: 78,
     predictedSuccessRate: 0.82,
