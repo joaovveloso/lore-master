@@ -65,7 +65,7 @@ export default function HomePage() {
   const currentGame = selectedGame ?? gamesList[0];
   const rivalGame = selectedRival ?? gamesList.find(g => g.appId !== currentGame.appId) ?? gamesList[0];
 
-  // Fallback analítico com appId ajustado para number (945360)
+  // Fallback analítico com categorias estritamente válidas para o TypeScript
   const defaultAnalysis: AnalysisResponse = {
     analysisId: "LM-9453-AMONG",
     appId: 945360,
@@ -114,7 +114,7 @@ export default function HomePage() {
         id: "issue-5",
         title: "Dificuldade de Comunicação e Filtros de Chat Rígidos Demais",
         severity: "medium",
-        category: "ui/ux",
+        category: "gameplay",
         impactScore: 4.8,
         description: "O sistema automatizado de moderação de texto bloqueia termos comuns e inofensivos, dificultando o debate estratégico durante as reuniões.",
         recommendation: "Ajustar a sensibilidade do filtro heurístico de linguagem e introduzir avisos contextuais de moderação antes de bloquear o envio."
