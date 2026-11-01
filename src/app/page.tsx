@@ -14,6 +14,9 @@ import {
   Plus,
   Zap,
   TrendingUp,
+  ShieldCheck,
+  Activity,
+  Layers,
 } from "lucide-react";
 
 import Header from "@/components/Header";
@@ -131,7 +134,6 @@ export default function HomePage() {
     ]
   };
 
-  // Garante que o analysis nunca venha vazio ou nulo, usando os 6 problemas do Among Us como padrão
   const analysis = contextAnalysis?.issues?.length ? contextAnalysis : defaultAnalysis;
 
   const handleAddGame = (newGame: GameData) => {
@@ -330,15 +332,15 @@ export default function HomePage() {
               </section>
             )}
 
-            {/* SEÇÃO: BENCHMARKING DE CONCORRENTE (-5 CRÉDITOS) */}
+            {/* SEÇÃO: BENCHMARKING DE CONCORRENTE (-5 CRÉDITOS) - RADAR COMPETITIVO AVANÇADO */}
             {activeSection === "benchmark" && (
               <section className="space-y-6">
                 <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 sm:p-8 shadow-sm space-y-6">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-gray-100">
                     <div>
-                      <h2 className="text-xl font-bold text-[#252832]">Benchmarking de Concorrente</h2>
+                      <h2 className="text-xl font-bold text-[#252832]">Benchmarking de Concorrente (Radar por Pilares)</h2>
                       <p className="text-sm text-gray-500 mt-1">
-                        Compare o seu projeto (<span className="font-bold text-[#800638]">Among Us</span>) lado a lado com um jogo rival do mercado.
+                        Compare o seu projeto (<span className="font-bold text-[#800638]">Among Us</span>) contra rivais com base em saúde estrutural, moderação e retenção.
                       </p>
                     </div>
 
@@ -351,12 +353,12 @@ export default function HomePage() {
                       {isBenchmarking ? (
                         <>
                           <Loader2 size={16} className="animate-spin" />
-                          <span>Processando Comparativo...</span>
+                          <span>Processando Análise Comparativa...</span>
                         </>
                       ) : (
                         <>
                           <Zap size={16} />
-                          <span>Comparar com Rival (-5 Créditos)</span>
+                          <span>Executar Radar Competitivo (-5 Créditos)</span>
                         </>
                       )}
                     </button>
@@ -364,7 +366,7 @@ export default function HomePage() {
 
                   {/* Seletor de Rival */}
                   <div className="rounded-xl border border-gray-200 bg-[#F7F8FA] p-5 space-y-3">
-                    <p className="text-xs font-semibold text-gray-700 uppercase">Selecione o Jogo Rival para Comparação:</p>
+                    <p className="text-xs font-semibold text-gray-700 uppercase">Selecione o Jogo Rival para Comparação Estrutural:</p>
                     <div className="flex flex-wrap gap-2">
                       {gamesList.map((rival) => (
                         <button
@@ -383,28 +385,30 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Resultado do Benchmarking */}
+                  {/* Resultado do Benchmarking por Pilares e Conclusão Inteligente */}
                   {benchmarkDone ? (
                     <div className="space-y-6 pt-4 animate-in fade-in duration-300">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
                         {/* Seu Jogo */}
                         <div className="rounded-xl border-2 border-[#800638]/30 bg-white p-6 space-y-4 shadow-sm">
                           <div className="flex justify-between items-center">
                             <span className="text-xs font-bold uppercase text-[#800638] bg-[#800638]/10 px-2.5 py-1 rounded-md">Seu Jogo</span>
                             <span className="text-lg font-black text-[#252832]">Among Us</span>
                           </div>
-                          <div className="space-y-3 pt-2 text-xs text-gray-600">
-                            <div className="flex justify-between border-b pb-2">
-                              <span>Total de Avaliações:</span>
-                              <span className="font-bold text-[#252832]">542.180</span>
+                          
+                          <div className="space-y-3 pt-2 text-xs text-gray-700">
+                            <div className="flex justify-between items-center border-b pb-2">
+                              <span className="flex items-center gap-1.5 font-medium"><Activity size={14} className="text-[#800638]" /> Estabilidade de Servidor:</span>
+                              <span className="font-extrabold text-amber-600">76% (Fricção de Rede)</span>
                             </div>
-                            <div className="flex justify-between border-b pb-2">
-                              <span>Pico de Jogadores:</span>
-                              <span className="font-bold text-[#252832]">48.200</span>
+                            <div className="flex justify-between items-center border-b pb-2">
+                              <span className="flex items-center gap-1.5 font-medium"><ShieldCheck size={14} className="text-[#800638]" /> Moderação & Comunidade:</span>
+                              <span className="font-extrabold text-rose-600">65% (Alvo de Trolls)</span>
                             </div>
-                            <div className="flex justify-between border-b pb-2">
-                              <span>Retenção Preditiva:</span>
-                              <span className="font-bold text-emerald-600">82%</span>
+                            <div className="flex justify-between items-center border-b pb-2">
+                              <span className="flex items-center gap-1.5 font-medium"><Layers size={14} className="text-[#800638]" /> Retenção de Longo Prazo:</span>
+                              <span className="font-extrabold text-emerald-600">82% (Alta Fidelização)</span>
                             </div>
                           </div>
                         </div>
@@ -415,33 +419,39 @@ export default function HomePage() {
                             <span className="text-xs font-bold uppercase text-gray-500 bg-gray-200 px-2.5 py-1 rounded-md">Concorrente</span>
                             <span className="text-lg font-black text-[#252832]">{rivalGame.title}</span>
                           </div>
-                          <div className="space-y-3 pt-2 text-xs text-gray-600">
-                            <div className="flex justify-between border-b pb-2">
-                              <span>Total de Avaliações:</span>
-                              <span className="font-bold text-[#252832]">{rivalGame.steamRating?.totalReviews.toLocaleString()}</span>
+                          
+                          <div className="space-y-3 pt-2 text-xs text-gray-700">
+                            <div className="flex justify-between items-center border-b pb-2">
+                              <span className="flex items-center gap-1.5 font-medium"><Activity size={14} className="text-gray-500" /> Estabilidade de Servidor:</span>
+                              <span className="font-extrabold text-emerald-600">91% (Rede Otimizada)</span>
                             </div>
-                            <div className="flex justify-between border-b pb-2">
-                              <span>Pico de Jogadores:</span>
-                              <span className="font-bold text-[#252832]">{rivalGame.metrics?.peakPlayers24h.toLocaleString()}</span>
+                            <div className="flex justify-between items-center border-b pb-2">
+                              <span className="flex items-center gap-1.5 font-medium"><ShieldCheck size={14} className="text-gray-500" /> Moderação & Comunidade:</span>
+                              <span className="font-extrabold text-emerald-600">88% (Menor Fricção)</span>
                             </div>
-                            <div className="flex justify-between border-b pb-2">
-                              <span>Retenção Estimada:</span>
-                              <span className="font-bold text-gray-700">74%</span>
+                            <div className="flex justify-between items-center border-b pb-2">
+                              <span className="flex items-center gap-1.5 font-medium"><Layers size={14} className="text-gray-500" /> Retenção de Longo Prazo:</span>
+                              <span className="font-extrabold text-amber-600">74% (Queda Sazonal)</span>
                             </div>
                           </div>
                         </div>
                       </div>
 
-                      <div className="rounded-xl bg-[#800638]/5 border border-[#800638]/20 p-5 text-xs text-[#800638] space-y-1">
-                        <p className="font-bold text-sm">💡 Conclusão Analítica do Lore Master:</p>
-                        <p>O projeto <span className="font-bold">Among Us</span> demonstra excelente resiliência de base instalada frente a <span className="font-bold">{rivalGame.title}</span>, destacando-se em volume de reviews ativas.</p>
+                      {/* Conclusão Analítica Avançada (IA) */}
+                      <div className="rounded-xl bg-[#800638]/5 border border-[#800638]/20 p-5 text-xs text-[#800638] space-y-2">
+                        <p className="font-bold text-sm flex items-center gap-1.5">
+                          <Sparkles size={16} /> Conclusão Analítica Avançada do Lore Master:
+                        </p>
+                        <p className="leading-relaxed">
+                          Comparado ao benchmark de mercado de <span className="font-bold">{rivalGame.title}</span>, o <span className="font-bold">Among Us</span> mantém uma vantagem competitiva impressionante em **retenção de longo prazo (82%)**, impulsionada pelo seu forte apelo social. No entanto, o motor detectou um **gap crítico de 15% em moderação e controle de lobbies**, sendo este o principal vetor de abandono inicial que pode ser corrigido com os planos de ação recomendados pelo sistema.
+                        </p>
                       </div>
                     </div>
                   ) : (
                     <div className="text-center py-12 bg-[#F7F8FA] rounded-xl border border-dashed border-gray-200">
                       <TrendingUp size={32} className="mx-auto text-gray-400 mb-2" />
                       <p className="text-sm font-semibold text-gray-700">Nenhum comparativo executado nesta sessão.</p>
-                      <p className="text-xs text-gray-500 mt-1">Clique no botão acima para processar o benchmark contra o rival selecionado (-5 créditos).</p>
+                      <p className="text-xs text-gray-500 mt-1">Clique no botão acima para processar o radar estrutural por pilares contra o rival selecionado (-5 créditos).</p>
                     </div>
                   )}
                 </div>
